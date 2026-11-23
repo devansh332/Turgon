@@ -1,0 +1,1456 @@
+# Agent-owned seed. Edit through `medallion proposals approve`, not by hand.
+.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 531
+  asset_type: null
+  category: null
+  confidence: 0.95
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+a/c leaking water onto the carpet near cubicle {n}. {building}.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 532
+  asset_type: hvac_unit
+  category: HVAC
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: true
+  issue_type: leak
+  urgency: high
+ac:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 533
+  asset_type: null
+  category: null
+  confidence: 0.8
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+alarm going off {building} no apparent reason:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.85
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 534
+  asset_type: fire_alarm
+  category: Fire Safety
+  confidence: 0.85
+  is_description: true
+  is_safety_issue: true
+  issue_type: safety_hazard
+  urgency: high
+ant infestation in {building}, {n} floor break room. getting worse.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 535
+  asset_type: pests
+  category: Pest Control
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: true
+  issue_type: infestation
+  urgency: high
+asdfasdfasdf:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 1.0
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 536
+  asset_type: null
+  category: null
+  confidence: 1.0
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+badge reader at {building} main entrance not working. staff can't get in.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 537
+  asset_type: badge_reader
+  category: Security & Access
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: false
+  issue_type: outage
+  urgency: high
+bird droppings on {building} entrance canopy. looks unprofessional.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 538
+  asset_type: common_area
+  category: Cleaning
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: false
+  issue_type: cleaning_request
+  urgency: low
+breaker keeps tripping in server room {n}. critical — affects production systems.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 539
+  asset_type: electrical_panel
+  category: Electrical
+  confidence: 0.95
+  is_description: true
+  is_safety_issue: false
+  issue_type: outage
+  urgency: critical
+bugs in office {building}:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 540
+  asset_type: pests
+  category: Pest Control
+  confidence: 0.8
+  is_description: true
+  is_safety_issue: false
+  issue_type: infestation
+  urgency: medium
+carpet coming up at seam, trip hazard, {building} {n} floor.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 541
+  asset_type: floor_surface
+  category: General Maintenance
+  confidence: 0.95
+  is_description: true
+  is_safety_issue: true
+  issue_type: safety_hazard
+  urgency: high
+carpet stain in executive suite, {building}. need professional cleaning.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 542
+  asset_type: floor_surface
+  category: Cleaning
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: false
+  issue_type: cleaning_request
+  urgency: low
+ceiling tile falling in {building} hallway, {n} floor. hazard.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 543
+  asset_type: ceiling
+  category: General Maintenance
+  confidence: 0.95
+  is_description: true
+  is_safety_issue: true
+  issue_type: safety_hazard
+  urgency: high
+cleaning:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 544
+  asset_type: null
+  category: null
+  confidence: 0.9
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+climate control:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.6
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 545
+  asset_type: hvac_unit
+  category: HVAC
+  confidence: 0.6
+  is_description: true
+  is_safety_issue: false
+  issue_type: malfunction
+  urgency: medium
+cockroach sighting in {building} restroom. third report this month.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 546
+  asset_type: pests
+  category: Pest Control
+  confidence: 0.95
+  is_description: true
+  is_safety_issue: true
+  issue_type: infestation
+  urgency: high
+cold:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.7
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 547
+  asset_type: thermostat
+  category: HVAC
+  confidence: 0.7
+  is_description: true
+  is_safety_issue: false
+  issue_type: malfunction
+  urgency: medium
+connectivity:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.6
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 549
+  asset_type: network
+  category: IT & Network
+  confidence: 0.6
+  is_description: true
+  is_safety_issue: false
+  issue_type: outage
+  urgency: medium
+door handle broken on room {n}, {building}.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 550
+  asset_type: door
+  category: Security & Access
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: false
+  issue_type: damage
+  urgency: medium
+door {n} won't lock. handle mechanism seems broken.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 551
+  asset_type: door
+  category: Security & Access
+  confidence: 0.95
+  is_description: true
+  is_safety_issue: false
+  issue_type: malfunction
+  urgency: high
+drain clogged in janitor closet, {n} floor.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 552
+  asset_type: drain
+  category: Plumbing
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: false
+  issue_type: malfunction
+  urgency: medium
+duplicate entry please delete:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 553
+  asset_type: null
+  category: null
+  confidence: 0.95
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+elec:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 554
+  asset_type: null
+  category: null
+  confidence: 0.9
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+electrical:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 555
+  asset_type: null
+  category: null
+  confidence: 0.9
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+elevator buttons for floor {n} not responding. {building}.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.85
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 556
+  asset_type: elevator
+  category: Elevator
+  confidence: 0.85
+  is_description: true
+  is_safety_issue: false
+  issue_type: malfunction
+  urgency: high
+elevator making grinding noise. {building} main elevator.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 557
+  asset_type: elevator
+  category: Elevator
+  confidence: 0.8
+  is_description: true
+  is_safety_issue: true
+  issue_type: malfunction
+  urgency: high
+elevator out of order again {building}:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.85
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 558
+  asset_type: elevator
+  category: Elevator
+  confidence: 0.85
+  is_description: true
+  is_safety_issue: false
+  issue_type: outage
+  urgency: high
+elevator {asset} stuck between floors {n} and {n}. no one inside (confirmed).:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 559
+  asset_type: elevator
+  category: Elevator
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: true
+  issue_type: outage
+  urgency: high
+elevator/escalator:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 560
+  asset_type: null
+  category: null
+  confidence: 0.9
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+emergency exit sign burnt out, {building} {n} floor east stairwell.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 561
+  asset_type: exit_sign
+  category: Fire Safety
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: true
+  issue_type: compliance
+  urgency: high
+emergency lighting test failed in stairwell a, {building}.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 562
+  asset_type: emergency_lighting
+  category: Fire Safety
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: true
+  issue_type: compliance
+  urgency: high
+emergency lighting test failed in stairwell b, {building}.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 563
+  asset_type: emergency_lighting
+  category: Fire Safety
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: true
+  issue_type: compliance
+  urgency: high
+emergency lighting test failed in stairwell c, {building}.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 564
+  asset_type: emergency_lighting
+  category: Fire Safety
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: true
+  issue_type: compliance
+  urgency: high
+emergency lighting test failed in stairwell north, {building}.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 565
+  asset_type: emergency_lighting
+  category: Fire Safety
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: true
+  issue_type: compliance
+  urgency: high
+emergency lighting test failed in stairwell south, {building}.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 566
+  asset_type: emergency_lighting
+  category: Fire Safety
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: true
+  issue_type: compliance
+  urgency: high
+faucet in {building} kitchen won't turn off completely. constant drip.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.85
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 567
+  asset_type: fixture
+  category: Plumbing
+  confidence: 0.85
+  is_description: true
+  is_safety_issue: false
+  issue_type: leak
+  urgency: medium
+fire alarm triggered in {building}, {n} floor. no visible fire. possible sensor malfunction.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 568
+  asset_type: fire_alarm
+  category: Fire Safety
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: true
+  issue_type: malfunction
+  urgency: high
+fire extinguisher expired in hallway near room {n}, {building}.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 569
+  asset_type: fire_extinguisher
+  category: Fire Safety
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: true
+  issue_type: compliance
+  urgency: high
+fire safety:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 570
+  asset_type: null
+  category: null
+  confidence: 0.9
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+fire/safety:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 571
+  asset_type: null
+  category: null
+  confidence: 0.9
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+furniture request — need {n} additional chairs for room {n}.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.85
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 572
+  asset_type: furniture
+  category: General Maintenance
+  confidence: 0.85
+  is_description: true
+  is_safety_issue: false
+  issue_type: service_request
+  urgency: low
+general maintenance:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 573
+  asset_type: null
+  category: null
+  confidence: 0.9
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+half the lights on {n} floor are out. {building}.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.85
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 574
+  asset_type: lighting
+  category: Electrical
+  confidence: 0.85
+  is_description: true
+  is_safety_issue: false
+  issue_type: outage
+  urgency: high
+heating system making loud banging noises in {building}, {n} floor. started yesterday.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.75
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 575
+  asset_type: heating_system
+  category: HVAC
+  confidence: 0.75
+  is_description: true
+  is_safety_issue: false
+  issue_type: malfunction
+  urgency: medium
+heating/cooling:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 576
+  asset_type: null
+  category: null
+  confidence: 0.9
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+hot water not working in {building}. multiple sinks affected.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.85
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 577
+  asset_type: water_heater
+  category: Plumbing
+  confidence: 0.85
+  is_description: true
+  is_safety_issue: false
+  issue_type: outage
+  urgency: high
+housekeeping:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 578
+  asset_type: null
+  category: null
+  confidence: 0.9
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+hvac:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 579
+  asset_type: null
+  category: null
+  confidence: 0.95
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+hvac broken again in {building}. its really hot:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 580
+  asset_type: hvac_unit
+  category: HVAC
+  confidence: 0.8
+  is_description: true
+  is_safety_issue: false
+  issue_type: outage
+  urgency: medium
+ignore this row:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 581
+  asset_type: null
+  category: null
+  confidence: 0.99
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+internet extremely slow in {building}. speed test showing {n} mbps down.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.85
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 582
+  asset_type: network
+  category: IT & Network
+  confidence: 0.85
+  is_description: true
+  is_safety_issue: false
+  issue_type: malfunction
+  urgency: medium
+it support:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 583
+  asset_type: null
+  category: null
+  confidence: 0.95
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+janitorial:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 584
+  asset_type: null
+  category: null
+  confidence: 0.95
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+lift:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 585
+  asset_type: null
+  category: null
+  confidence: 0.95
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+lights flickering in {building}, {n} floor hallway. has been happening for {n} days.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 586
+  asset_type: lighting
+  category: Electrical
+  confidence: 0.8
+  is_description: true
+  is_safety_issue: true
+  issue_type: safety_hazard
+  urgency: high
+mice spotted in {building} kitchen area. droppings found in cabinets.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 587
+  asset_type: pests
+  category: Pest Control
+  confidence: 0.95
+  is_description: true
+  is_safety_issue: true
+  issue_type: infestation
+  urgency: high
+need access card programmed for new employee starting {day}. {building} {n} floor.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.7
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 588
+  asset_type: badge_reader
+  category: Security & Access
+  confidence: 0.7
+  is_description: true
+  is_safety_issue: false
+  issue_type: service_request
+  urgency: medium
+need more outlets in conf room {n}:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 589
+  asset_type: power_outlet
+  category: Electrical
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: false
+  issue_type: service_request
+  urgency: low
+network:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 590
+  asset_type: null
+  category: null
+  confidence: 0.95
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+network jack at desk {n} not active. new hire needs connectivity.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 591
+  asset_type: network
+  category: IT & Network
+  confidence: 0.8
+  is_description: true
+  is_safety_issue: false
+  issue_type: outage
+  urgency: low
+'null':
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 592
+  asset_type: null
+  category: null
+  confidence: 0.9
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+other:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.6
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 593
+  asset_type: null
+  category: null
+  confidence: 0.6
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+paint peeling in {building} lobby. looks bad for visitors.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.85
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 594
+  asset_type: wall
+  category: General Maintenance
+  confidence: 0.85
+  is_description: true
+  is_safety_issue: false
+  issue_type: damage
+  urgency: low
+parking lot pothole getting larger. near spot {n}.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 595
+  asset_type: parking_lot
+  category: General Maintenance
+  confidence: 0.8
+  is_description: true
+  is_safety_issue: true
+  issue_type: safety_hazard
+  urgency: high
+pest:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 596
+  asset_type: null
+  category: null
+  confidence: 0.8
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+pipe burst:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 597
+  asset_type: pipe
+  category: Plumbing
+  confidence: 0.8
+  is_description: true
+  is_safety_issue: true
+  issue_type: leak
+  urgency: critical
+please check the hvac — multiple complaints from staff on {n}th floor about humidity.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.85
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 598
+  asset_type: hvac_unit
+  category: HVAC
+  confidence: 0.85
+  is_description: true
+  is_safety_issue: false
+  issue_type: malfunction
+  urgency: medium
+plumbing:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.6
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 599
+  asset_type: null
+  category: null
+  confidence: 0.6
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+plumbing issue:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.65
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 600
+  asset_type: null
+  category: null
+  confidence: 0.65
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+power outlet not working at desk {n}. tried multiple devices.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 601
+  asset_type: power_outlet
+  category: Electrical
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: false
+  issue_type: outage
+  urgency: low
+printer on {n} floor not connecting to network. model hp {asset}.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 602
+  asset_type: printer
+  category: IT & Network
+  confidence: 0.8
+  is_description: true
+  is_safety_issue: false
+  issue_type: outage
+  urgency: low
+restrooms on {n} floor haven't been serviced today.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 603
+  asset_type: restroom
+  category: Cleaning
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: false
+  issue_type: cleaning_request
+  urgency: low
+security:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 604
+  asset_type: null
+  category: null
+  confidence: 0.9
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+security camera {asset} offline since yesterday. covers parking lot sector {n}.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 605
+  asset_type: camera
+  category: Security & Access
+  confidence: 0.8
+  is_description: true
+  is_safety_issue: false
+  issue_type: outage
+  urgency: high
+security systems:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 606
+  asset_type: null
+  category: null
+  confidence: 0.9
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+smoke detector beeping {building}:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 607
+  asset_type: smoke_detector
+  category: Fire Safety
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: true
+  issue_type: safety_hazard
+  urgency: high
+sparking outlet in {building} — do not use, taped off:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 608
+  asset_type: power_outlet
+  category: Electrical
+  confidence: 0.95
+  is_description: true
+  is_safety_issue: true
+  issue_type: safety_hazard
+  urgency: high
+spill in {building} lobby. slip hazard.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 609
+  asset_type: common_area
+  category: Cleaning
+  confidence: 0.95
+  is_description: true
+  is_safety_issue: true
+  issue_type: safety_hazard
+  urgency: high
+sprinkler head damaged in {building} storage room {n}. needs replacement before it leaks.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 610
+  asset_type: sprinkler
+  category: Fire Safety
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: true
+  issue_type: damage
+  urgency: high
+tailgating incident reported at {building} loading dock. review camera footage.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 611
+  asset_type: camera
+  category: Security & Access
+  confidence: 0.8
+  is_description: true
+  is_safety_issue: false
+  issue_type: security_incident
+  urgency: high
+temperature control issue in conference room {n}. the thermostat reads {n} degrees but it feels much colder.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 612
+  asset_type: thermostat
+  category: HVAC
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: false
+  issue_type: malfunction
+  urgency: medium
+test:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 613
+  asset_type: null
+  category: null
+  confidence: 0.9
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+the ac unit on {n} floor is not working. room temp is around {n}f. please fix asap.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.85
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 614
+  asset_type: hvac_unit
+  category: HVAC
+  confidence: 0.85
+  is_description: true
+  is_safety_issue: false
+  issue_type: outage
+  urgency: high
+toilet in {n} floor men's restroom is overflowing. urgent.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 615
+  asset_type: toilet
+  category: Plumbing
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: true
+  issue_type: leak
+  urgency: high
+trash overflowing in kitchen area {building}:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.75
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 616
+  asset_type: common_area
+  category: Cleaning
+  confidence: 0.75
+  is_description: true
+  is_safety_issue: false
+  issue_type: cleaning_request
+  urgency: low
+unit {asset} cycling on and off every few minutes. coils might be frozen.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.85
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 617
+  asset_type: hvac_unit
+  category: HVAC
+  confidence: 0.85
+  is_description: true
+  is_safety_issue: false
+  issue_type: malfunction
+  urgency: medium
+vertical transport:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 618
+  asset_type: null
+  category: null
+  confidence: 0.9
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+vpn issues from {building} conference room. can't connect to corporate.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 619
+  asset_type: vpn
+  category: IT & Network
+  confidence: 0.8
+  is_description: true
+  is_safety_issue: false
+  issue_type: outage
+  urgency: medium
+wasp nest forming on {building} exterior, near entrance.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 620
+  asset_type: pests
+  category: Pest Control
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: true
+  issue_type: infestation
+  urgency: high
+water everywhere in bathroom {building}:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 621
+  asset_type: pipe
+  category: Plumbing
+  confidence: 0.8
+  is_description: true
+  is_safety_issue: true
+  issue_type: leak
+  urgency: critical
+water issue:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 622
+  asset_type: null
+  category: null
+  confidence: 0.9
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+water leak detected in ceiling tiles, {building} room {n}. appears to be coming from above.:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 623
+  asset_type: ceiling
+  category: Plumbing
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: true
+  issue_type: leak
+  urgency: high
+water/plumbing:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 624
+  asset_type: null
+  category: null
+  confidence: 0.9
+  is_description: false
+  is_safety_issue: false
+  issue_type: null
+  urgency: null
+wheelchair-accessible elevator in {building} has expired inspection certificate (noticed today).:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.85
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 625
+  asset_type: elevator
+  category: Elevator
+  confidence: 0.85
+  is_description: true
+  is_safety_issue: true
+  issue_type: compliance
+  urgency: high
+wifi down on {n} floor, {building}. multiple users affected.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 626
+  asset_type: wifi
+  category: IT & Network
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: false
+  issue_type: outage
+  urgency: high
+wifi password not working:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 627
+  asset_type: wifi
+  category: IT & Network
+  confidence: 0.8
+  is_description: true
+  is_safety_issue: false
+  issue_type: outage
+  urgency: medium
+window cracked {building} {n} floor:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 628
+  asset_type: window
+  category: General Maintenance
+  confidence: 0.9
+  is_description: true
+  is_safety_issue: true
+  issue_type: damage
+  urgency: high

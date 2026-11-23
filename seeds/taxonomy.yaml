@@ -1,0 +1,66 @@
+# Human-owned controlled vocabularies. Agents must choose from these lists; anything else is rejected
+# by schema validation, which is the main guardrail against free-text drift in silver.
+categories:
+  - HVAC
+  - Electrical
+  - Plumbing
+  - Elevator
+  - Fire Safety
+  - Security & Access
+  - IT & Network
+  - Cleaning
+  - Pest Control
+  - General Maintenance
+
+asset_types:
+  - hvac_unit
+  - thermostat
+  - heating_system
+  - elevator
+  - lighting
+  - power_outlet
+  - electrical_panel
+  - emergency_lighting
+  - pipe
+  - fixture
+  - toilet
+  - drain
+  - water_heater
+  - fire_alarm
+  - smoke_detector
+  - sprinkler
+  - fire_extinguisher
+  - exit_sign
+  - camera
+  - badge_reader
+  - door
+  - alarm
+  - network
+  - wifi
+  - vpn
+  - printer
+  - floor_surface
+  - ceiling
+  - window
+  - wall
+  - furniture
+  - parking_lot
+  - restroom
+  - common_area
+  - pests
+  - other
+
+issue_types:
+  - outage
+  - malfunction
+  - leak
+  - damage
+  - safety_hazard
+  - infestation
+  - cleaning_request
+  - service_request
+  - security_incident
+  - compliance
+  - other
+
+urgency_levels: [critical, high, medium, low]

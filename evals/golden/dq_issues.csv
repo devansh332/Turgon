@@ -1,0 +1,26 @@
+column,issue_type,also_accept,evidence
+ticket_id,invalid_identifier,,"'15', '90' and other non TKT- ids"
+ticket_id,placeholder_values,ticket_id:invalid_identifier;ticket_id:missing_values,"'N/A', 'NULL', blank ids"
+created_at,mixed_formats,,seven timestamp shapes including epoch seconds
+created_at,placeholder_values,created_at:sentinel_values;created_at:mixed_formats,"'asap', 'TBD', 'not a date', '00/00/0000'"
+resolved_at,mixed_formats,,same shapes as created_at
+resolved_at,placeholder_values,resolved_at:sentinel_values;resolved_at:mixed_formats,"'???', 'never', 'pending'"
+resolved_at,logical_inconsistency,created_at:logical_inconsistency,resolved before created; open tickets with a resolution date
+category,synonyms_or_casing,,115 raw values for ~10 real categories
+category,swapped_fields,description:swapped_fields,descriptions typed into category
+category,test_or_junk_data,,"'test', 'asdf', 'DELETE ME'"
+priority,synonyms_or_casing,,"22 variants: 'hi', 'crit', 'med', 'Normal'"
+priority,missing_values,priority:placeholder_values,~10% blank
+status,placeholder_values,status:missing_values;status:sentinel_values,"'NULL', 'unknown', '???'"
+building,placeholder_values,building:missing_values;building:sentinel_values,"'???', 'unknown', blank"
+building,test_or_junk_data,,'test building'
+description,free_text_needs_parsing,,"templated text holding building, floor, room, asset id"
+description,missing_values,description:placeholder_values;description:test_or_junk_data,117 blank
+submitted_by,synonyms_or_casing,,"'Jane Doe', 'jane doe', 'J. Doe'"
+submitted_by,test_or_junk_data,,"'admin', 'system', 'test'"
+assigned_to,missing_values,,~30% blank
+cost,placeholder_values,cost:sentinel_values;cost:missing_values,"'N/A', 'TBD', 'error', 'NULL'"
+cost,sentinel_values,cost:out_of_range,'-1'
+cost,mixed_formats,,'$' prefixed values
+sla_hours,sentinel_values,sla_hours:out_of_range,"'999', '0', '-1'"
+sla_hours,placeholder_values,sla_hours:sentinel_values;sla_hours:out_of_range;sla_hours:missing_values,"'N/A', 'NULL'"

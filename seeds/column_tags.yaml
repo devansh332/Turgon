@@ -1,0 +1,157 @@
+# Agent-owned seed. Edit through `medallion proposals approve`, not by hand.
+bronze.tickets_raw.assigned_to:
+  _provenance:
+    agent: tagging
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 523
+  domain: operations
+  pii: true
+  pii_type: free_text_may_contain_pii
+  sensitivity: confidential
+bronze.tickets_raw.building:
+  _provenance:
+    agent: tagging
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 520
+  domain: location
+  pii: false
+  pii_type: null
+  sensitivity: internal
+bronze.tickets_raw.category:
+  _provenance:
+    agent: tagging
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 517
+  domain: operations
+  pii: false
+  pii_type: null
+  sensitivity: internal
+bronze.tickets_raw.cost:
+  _provenance:
+    agent: tagging
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 525
+  domain: finance
+  pii: false
+  pii_type: null
+  sensitivity: internal
+bronze.tickets_raw.created_at:
+  _provenance:
+    agent: tagging
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 515
+  domain: operations
+  pii: false
+  pii_type: null
+  sensitivity: internal
+bronze.tickets_raw.description:
+  _provenance:
+    agent: tagging
+    approved_by: devansh
+    confidence: 0.75
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 521
+  domain: operations
+  pii: true
+  pii_type: free_text_may_contain_pii
+  sensitivity: confidential
+bronze.tickets_raw.priority:
+  _provenance:
+    agent: tagging
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 518
+  domain: operations
+  pii: false
+  pii_type: null
+  sensitivity: internal
+bronze.tickets_raw.resolution_notes:
+  _provenance:
+    agent: tagging
+    approved_by: devansh
+    confidence: 0.75
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 524
+  domain: operations
+  pii: true
+  pii_type: free_text_may_contain_pii
+  sensitivity: confidential
+bronze.tickets_raw.resolved_at:
+  _provenance:
+    agent: tagging
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 516
+  domain: operations
+  pii: false
+  pii_type: null
+  sensitivity: internal
+bronze.tickets_raw.sla_hours:
+  _provenance:
+    agent: tagging
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 526
+  domain: operations
+  pii: false
+  pii_type: null
+  sensitivity: internal
+bronze.tickets_raw.status:
+  _provenance:
+    agent: tagging
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 519
+  domain: operations
+  pii: false
+  pii_type: null
+  sensitivity: internal
+bronze.tickets_raw.submitted_by:
+  _provenance:
+    agent: tagging
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 522
+  domain: people
+  pii: true
+  pii_type: person_name
+  sensitivity: confidential
+bronze.tickets_raw.ticket_id:
+  _provenance:
+    agent: tagging
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 514
+  domain: operations
+  pii: false
+  pii_type: null
+  sensitivity: internal

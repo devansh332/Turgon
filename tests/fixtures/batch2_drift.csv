@@ -1,0 +1,6 @@
+ticket_id,created_at,resolved_at,category,priority,status,building,description,submitted_by,assigned_to,resolution_notes,cost,sla_hours,channel
+TKT-5528,2025-02-17T12:41:38,2025-02-18T09:00:00,power issue,Low,Closed,Annex West,Power outlet not working at desk 392. Tried multiple devices.,David Kim,CityWide Electric,Resolved. Root cause: faulty wiring.,250.00,48,phone
+TKT-3108,2024-07-25T18:27:44,2025-07-01,Fire Safety,LOW,Resolved,Building 3,smoke detector beeping Building 3,Lisa Chen,Joe (in-house),Duplicate of ticket #3098. Closing.,,,email
+TKT-20001,2025-06-30 08:15:00,,Elec. & Lighting,high,Open,Tower A,Half the lights on 3 floor are out. Tower A.,Karen Lee,,,,8,portal
+TKT-20001,2025-06-30 08:15:00,,Elec. & Lighting,high,Open,Tower A,Half the lights on 3 floor are out. Tower A.,Karen Lee,,,,8,portal
+TKT-20002,2025-06-30 09:40:00,,Electrical,critical,Escalated,Data Center 1,Backup generator failed its weekly load test at Data Center 1.,Tom Wilson,CityWide Electric,Vendor called. Scheduled for Tuesday.,,4,phone

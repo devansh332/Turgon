@@ -1,0 +1,63 @@
+label,is_label,category,label_source
+,false,,human
+???,false,,human
+a/c,true,HVAC,human
+ac,true,HVAC,human
+access control,true,Security & Access,human
+air conditioning,true,HVAC,human
+asdf,false,,human
+badge/access,true,Security & Access,human
+bird droppings on parking garage entrance canopy. looks unpr,false,,human
+breaker keeps tripping in server room 696. critical — affect,false,,human
+bugs in office remote site beta,false,,human
+cleaning,true,Cleaning,human
+climate control,true,HVAC,human
+cold,false,,human
+connectivity,true,IT & Network,human
+delete me,false,,human
+elec,true,Electrical,human
+electrical,true,Electrical,human
+electrical systems,true,Electrical,human
+elevator,true,Elevator,human
+elevator a-001 stuck between floors 4 and 12. no one inside,false,,human
+elevator/escalator,true,Elevator,human
+exterminator,true,Pest Control,human
+fire alarm,true,Fire Safety,human
+fire safety,true,Fire Safety,human
+fire/safety,true,Fire Safety,human
+general,true,General Maintenance,human
+general maintenance,true,General Maintenance,human
+heating cooling,true,HVAC,human
+heating/cooling,true,HVAC,human
+housekeeping,true,Cleaning,human
+hvac,true,HVAC,human
+hvac system,true,HVAC,human
+it,true,IT & Network,human
+it support,true,IT & Network,human
+it/network,true,IT & Network,human
+janitorial,true,Cleaning,human
+lift,true,Elevator,human
+maintenance,true,General Maintenance,human
+misc,true,General Maintenance,human
+need more outlets in conf room 387,false,,human
+network,true,IT & Network,human
+null,false,,human
+other,true,General Maintenance,human
+pest,true,Pest Control,human
+pest control,true,Pest Control,human
+pipe burst,false,,human
+plumbing,true,Plumbing,human
+plumbing issue,true,Plumbing,human
+power,true,Electrical,human
+power issue,true,Electrical,human
+security,true,Security & Access,human
+security systems,true,Security & Access,human
+smoke detector beeping tower a,false,,human
+sprinkler,true,Fire Safety,human
+test,false,,human
+unknown,false,,human
+vertical transport,true,Elevator,human
+water issue,true,Plumbing,human
+water/plumbing,true,Plumbing,human
+wifi,true,IT & Network,human
+window cracked hq floor 2 6 floor,false,,human

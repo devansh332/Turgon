@@ -1,0 +1,18 @@
+# Agent-owned seed. Edit through `medallion proposals approve`, not by hand.
+silver.tickets.channel:
+  _provenance:
+    agent: schema
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 666
+  alter_sql: ALTER TABLE silver.tickets ADD COLUMN IF NOT EXISTS channel text;
+  extract_sql: CASE WHEN (_extra->>'channel') ~ '^[A-Za-z0-9 _./-]{1,100}$' THEN _extra->>'channel' ELSE NULL END
+  pg_type: text
+  samples:
+  - email
+  - phone
+  - portal
+  silver_column: channel
+  sql_valid: true

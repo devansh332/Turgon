@@ -1,0 +1,143 @@
+{
+  "evaluated_at": "2026-11-23T09:46:02+00:00",
+  "model": {
+    "bulk": "gpt-5-mini",
+    "reasoning": "gpt-5-mini",
+    "base_url": "https://api.openai.com/v1"
+  },
+  "prompt_versions": {
+    "category_labels": "v1",
+    "description_templates": "v1",
+    "people": "v1",
+    "dq_rules": "v1"
+  },
+  "labels": {
+    "agent": {
+      "items": 62,
+      "returned": 62,
+      "is_label_accuracy": 0.9677,
+      "category_accuracy": 1.0
+    },
+    "held_out": {
+      "items": 53,
+      "returned": 53,
+      "is_label_accuracy": 0.9623,
+      "category_accuracy": 1.0
+    },
+    "rules_baseline": {
+      "items": 62,
+      "returned": 62,
+      "is_label_accuracy": 0.9677,
+      "category_accuracy": 1.0
+    },
+    "rules_baseline_held_out": {
+      "items": 53,
+      "returned": 53,
+      "is_label_accuracy": 0.9623,
+      "category_accuracy": 1.0
+    }
+  },
+  "templates": {
+    "agent": {
+      "items": 69,
+      "returned": 69,
+      "is_description_accuracy": 1.0,
+      "category_accuracy": 0.9365,
+      "safety_accuracy": 0.8254,
+      "urgency_exact": 0.7143,
+      "urgency_within_one": 1.0
+    },
+    "held_out": {
+      "items": 66,
+      "returned": 66,
+      "is_description_accuracy": 1.0,
+      "category_accuracy": 0.9333,
+      "safety_accuracy": 0.8167,
+      "urgency_exact": 0.7,
+      "urgency_within_one": 1.0
+    },
+    "rules_baseline": {
+      "items": 69,
+      "returned": 69,
+      "is_description_accuracy": 0.9565,
+      "category_accuracy": 0.873,
+      "safety_accuracy": 0.9048,
+      "urgency_exact": 0.6508,
+      "urgency_within_one": 0.9683
+    },
+    "rules_baseline_held_out": {
+      "items": 66,
+      "returned": 66,
+      "is_description_accuracy": 0.9545,
+      "category_accuracy": 0.8667,
+      "safety_accuracy": 0.9167,
+      "urgency_exact": 0.6333,
+      "urgency_within_one": 0.9667
+    }
+  },
+  "people": {
+    "agent": {
+      "items": 19,
+      "canonical_accuracy": 0.9474,
+      "resolution_accuracy": 0.9474
+    },
+    "held_out": {
+      "items": 14,
+      "canonical_accuracy": 0.9286,
+      "resolution_accuracy": 0.9286
+    },
+    "rules_baseline": {
+      "items": 19,
+      "canonical_accuracy": 0.9474,
+      "resolution_accuracy": 0.9474
+    },
+    "rules_baseline_held_out": {
+      "items": 14,
+      "canonical_accuracy": 0.9286,
+      "resolution_accuracy": 0.9286
+    }
+  },
+  "dq": {
+    "agent": {
+      "golden_issues": 25,
+      "rules": 15,
+      "recall": 0.4,
+      "column_recall": 1.0,
+      "executable_rate": 1.0,
+      "non_empty_rate": 1.0,
+      "missed": [
+        "building:placeholder_values",
+        "building:test_or_junk_data",
+        "category:swapped_fields",
+        "category:test_or_junk_data",
+        "cost:mixed_formats",
+        "cost:placeholder_values",
+        "created_at:placeholder_values",
+        "description:missing_values",
+        "resolved_at:logical_inconsistency",
+        "resolved_at:mixed_formats",
+        "resolved_at:placeholder_values",
+        "sla_hours:placeholder_values",
+        "status:placeholder_values",
+        "submitted_by:test_or_junk_data",
+        "ticket_id:placeholder_values"
+      ]
+    }
+  },
+  "ops": {
+    "calls": 36,
+    "first_try_valid_rate": 0.8889,
+    "failure_rate": 0.0,
+    "latency_ms_p50": 36443.5,
+    "latency_ms_p95": 72520,
+    "tokens_in": 84805,
+    "tokens_out": 117118,
+    "cost_usd": 0.25544,
+    "classifier_cost_per_1k_rows": 0.021385
+  },
+  "gate": {
+    "passed": true,
+    "failures": [],
+    "compared_with": null
+  }
+}

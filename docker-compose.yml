@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: medallion
+      POSTGRES_PASSWORD: medallion
+      POSTGRES_DB: medallion
+    ports:
+      - "${DB_PORT:-5433}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medallion -d medallion"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  pipeline:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://medallion:medallion@db:5432/medallion
+      TEST_DATABASE_URL: postgresql://medallion:medallion@db:5432/medallion_test
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.openai.com/v1}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_MODEL_BULK: ${LLM_MODEL_BULK:-gpt-5-mini}
+      LLM_MODEL_REASONING: ${LLM_MODEL_REASONING:-gpt-5-mini}
+      LLM_PRICE_INPUT_PER_1M: ${LLM_PRICE_INPUT_PER_1M:-0.25}
+      LLM_PRICE_OUTPUT_PER_1M: ${LLM_PRICE_OUTPUT_PER_1M:-2.00}
+      LLM_DAILY_BUDGET_USD: ${LLM_DAILY_BUDGET_USD:-2.00}
+      REPLAY_WINDOW_HOURS: ${REPLAY_WINDOW_HOURS:-48}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - .:/app
+    command: ["python", "-m", "medallion", "run"]
+
+volumes:
+  pgdata:

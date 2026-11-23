@@ -1,0 +1,43 @@
+# Agent-owned seed. Edit through `medallion proposals approve`, not by hand.
+assigned_to_missing:
+  _provenance:
+    agent: dq
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 507
+  action: flag
+  affected_rows: 3122
+  column: assigned_to
+  dry_run_error: null
+  finding: assigned_to has a high blank rate (30.37% → 3122 blank rows per profile) with many rows unassigned.
+  implementation: Flag these rows in silver (assigned_to IS NULL) and surface them to operations; do not attribute
+    work or SLA ownership until an assignee is set.
+  issue_type: missing_values
+  predicate: btrim(assigned_to) = ''
+  severity: medium
+  why_it_matters: Unassigned tickets cannot be used to analyze workload distribution, technician performance or
+    SLA accountability.
+resolution_notes_uninformative_placeholders:
+  _provenance:
+    agent: dq
+    approved_by: devansh
+    confidence: 0.8
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 510
+  action: flag
+  affected_rows: 1576
+  column: resolution_notes
+  dry_run_error: null
+  finding: 'resolution_notes contains many short/uninformative placeholders and blanks: profile top_values include
+    '''' = 1575, ''fixed'' = 821, ''done'' = 755 and many templated ''Vendor called...'' strings.'
+  implementation: In silver replace trivial placeholders ('fixed','done') with NULL for resolution_notes and add
+    a resolution_notes_flag indicating 'placeholder' so analytics ignore them for text-based summaries.
+  issue_type: sentinel_values
+  predicate: btrim(lower(resolution_notes)) IN ('fixed','done')
+  requested_action: null_out
+  severity: medium
+  why_it_matters: One-word placeholders like 'fixed' or 'done' do not provide root-cause or work-detail needed for
+    trend analysis and vendor performance evaluation.

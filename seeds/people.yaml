@@ -1,0 +1,311 @@
+# Agent-owned seed. Edit through `medallion proposals approve`, not by hand.
+a. garcia:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 467
+  canonical: Alex Garcia
+  resolution: initials
+admin:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 468
+  canonical: null
+  resolution: system
+alex garcia:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 469
+  canonical: Alex Garcia
+  resolution: exact
+c. taylor:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 471
+  canonical: Chris Taylor
+  resolution: initials
+chris taylor:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 472
+  canonical: Chris Taylor
+  resolution: exact
+d. kim:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 473
+  canonical: David Kim
+  resolution: initials
+david kim:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 474
+  canonical: David Kim
+  resolution: exact
+e. brown:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 475
+  canonical: Emily Brown
+  resolution: initials
+emily brown:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 476
+  canonical: Emily Brown
+  resolution: exact
+j. doe:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 477
+  canonical: Jane Doe
+  resolution: initials
+j. smith:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 478
+  canonical: John Smith
+  resolution: initials
+jane doe:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 479
+  canonical: Jane Doe
+  resolution: exact
+john smith:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 480
+  canonical: John Smith
+  resolution: exact
+jordan rivera:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 481
+  canonical: Jordan Rivera
+  resolution: exact
+k. lee:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 482
+  canonical: Karen Lee
+  resolution: initials
+karen lee:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 483
+  canonical: Karen Lee
+  resolution: exact
+l. chen:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 484
+  canonical: Lisa Chen
+  resolution: initials
+lisa chen:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 485
+  canonical: Lisa Chen
+  resolution: exact
+m. johnson:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 486
+  canonical: M. Johnson
+  resolution: ambiguous
+michael johnson:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 487
+  canonical: Michael Johnson
+  resolution: exact
+nancy white:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 489
+  canonical: Nancy White
+  resolution: exact
+pat anderson:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 490
+  canonical: Pat Anderson
+  resolution: exact
+r. martinez:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 491
+  canonical: Robert Martinez
+  resolution: initials
+robert martinez:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 492
+  canonical: Robert Martinez
+  resolution: exact
+s. williams:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 493
+  canonical: Sarah Williams
+  resolution: initials
+sam jackson:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 494
+  canonical: Sam Jackson
+  resolution: exact
+sarah williams:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 495
+  canonical: Sarah Williams
+  resolution: exact
+system:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 496
+  canonical: null
+  resolution: system
+t. wilson:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 497
+  canonical: Tom Wilson
+  resolution: initials
+test:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 498
+  canonical: null
+  resolution: system
+tom wilson:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 499
+  canonical: Tom Wilson
+  resolution: exact

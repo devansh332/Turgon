@@ -1,0 +1,142 @@
+{
+  "evaluated_at": "2026-11-23T10:10:44+00:00",
+  "model": {
+    "bulk": "gpt-5-mini",
+    "reasoning": "gpt-5-mini",
+    "base_url": "https://api.openai.com/v1"
+  },
+  "prompt_versions": {
+    "category_labels": "v1",
+    "description_templates": "v1",
+    "people": "v1",
+    "dq_rules": "v2"
+  },
+  "labels": {
+    "agent": {
+      "items": 62,
+      "returned": 62,
+      "is_label_accuracy": 0.9677,
+      "category_accuracy": 1.0
+    },
+    "held_out": {
+      "items": 53,
+      "returned": 53,
+      "is_label_accuracy": 0.9623,
+      "category_accuracy": 1.0
+    },
+    "rules_baseline": {
+      "items": 62,
+      "returned": 62,
+      "is_label_accuracy": 0.9677,
+      "category_accuracy": 1.0
+    },
+    "rules_baseline_held_out": {
+      "items": 53,
+      "returned": 53,
+      "is_label_accuracy": 0.9623,
+      "category_accuracy": 1.0
+    }
+  },
+  "templates": {
+    "agent": {
+      "items": 69,
+      "returned": 69,
+      "is_description_accuracy": 1.0,
+      "category_accuracy": 0.9365,
+      "safety_accuracy": 0.8254,
+      "urgency_exact": 0.6984,
+      "urgency_within_one": 1.0
+    },
+    "held_out": {
+      "items": 66,
+      "returned": 66,
+      "is_description_accuracy": 1.0,
+      "category_accuracy": 0.9333,
+      "safety_accuracy": 0.8167,
+      "urgency_exact": 0.6833,
+      "urgency_within_one": 1.0
+    },
+    "rules_baseline": {
+      "items": 69,
+      "returned": 69,
+      "is_description_accuracy": 0.9565,
+      "category_accuracy": 0.873,
+      "safety_accuracy": 0.9048,
+      "urgency_exact": 0.6508,
+      "urgency_within_one": 0.9683
+    },
+    "rules_baseline_held_out": {
+      "items": 66,
+      "returned": 66,
+      "is_description_accuracy": 0.9545,
+      "category_accuracy": 0.8667,
+      "safety_accuracy": 0.9167,
+      "urgency_exact": 0.6333,
+      "urgency_within_one": 0.9667
+    }
+  },
+  "people": {
+    "agent": {
+      "items": 19,
+      "canonical_accuracy": 0.9474,
+      "resolution_accuracy": 0.9474
+    },
+    "held_out": {
+      "items": 14,
+      "canonical_accuracy": 0.9286,
+      "resolution_accuracy": 0.9286
+    },
+    "rules_baseline": {
+      "items": 19,
+      "canonical_accuracy": 0.9474,
+      "resolution_accuracy": 0.9474
+    },
+    "rules_baseline_held_out": {
+      "items": 14,
+      "canonical_accuracy": 0.9286,
+      "resolution_accuracy": 0.9286
+    }
+  },
+  "dq": {
+    "agent": {
+      "golden_issues": 25,
+      "rules": 13,
+      "recall": 0.56,
+      "strict_recall": 0.44,
+      "column_recall": 1.0,
+      "executable_rate": 1.0,
+      "non_empty_rate": 1.0,
+      "missed": [
+        "building:test_or_junk_data",
+        "category:swapped_fields",
+        "category:test_or_junk_data",
+        "cost:mixed_formats",
+        "description:missing_values",
+        "priority:missing_values",
+        "resolved_at:mixed_formats",
+        "resolved_at:placeholder_values",
+        "sla_hours:placeholder_values",
+        "sla_hours:sentinel_values",
+        "submitted_by:test_or_junk_data"
+      ]
+    }
+  },
+  "ops": {
+    "calls": 15,
+    "first_try_valid_rate": 0.7333,
+    "failure_rate": 0.0,
+    "latency_ms_p50": 34583,
+    "latency_ms_p95": 52413,
+    "tokens_in": 41628,
+    "tokens_out": 54826,
+    "cost_usd": 0.12006,
+    "classifier_cost_per_1k_rows": 0.010222
+  },
+  "gate": {
+    "passed": false,
+    "failures": [
+      "ops.first_try_valid_rate: 0.8889 -> 0.7333"
+    ],
+    "compared_with": "2026-11-23T09:46:02+00:00"
+  }
+}

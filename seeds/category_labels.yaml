@@ -1,0 +1,991 @@
+# Agent-owned seed. Edit through `medallion proposals approve`, not by hand.
+? ''
+: _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 270
+  category: null
+  is_label: false
+???:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 271
+  category: null
+  is_label: false
+a/c:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 272
+  category: HVAC
+  is_label: true
+ac:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 273
+  category: HVAC
+  is_label: true
+access control:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.97
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 274
+  category: Security & Access
+  is_label: true
+air conditioning:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 275
+  category: HVAC
+  is_label: true
+asdf:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 276
+  category: null
+  is_label: false
+badge/access:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.97
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 277
+  category: Security & Access
+  is_label: true
+bird droppings on parking garage entrance canopy. looks unpr:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 278
+  category: null
+  is_label: false
+breaker keeps tripping in server room 696. critical — affect:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 279
+  category: null
+  is_label: false
+bugs in office remote site beta:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 280
+  category: null
+  is_label: false
+cleaning:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 281
+  category: Cleaning
+  is_label: true
+climate control:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.93
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 282
+  category: HVAC
+  is_label: true
+cold:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.75
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 283
+  category: HVAC
+  is_label: true
+connectivity:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.92
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 284
+  category: IT & Network
+  is_label: true
+delete me:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 285
+  category: null
+  is_label: false
+elec:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 286
+  category: Electrical
+  is_label: true
+electrical:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 287
+  category: Electrical
+  is_label: true
+electrical systems:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 288
+  category: Electrical
+  is_label: true
+elevator:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 289
+  category: Elevator
+  is_label: true
+elevator a-001 stuck between floors 4 and 12. no one inside:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 290
+  category: null
+  is_label: false
+elevator buttons for floor 1 not responding. hq floor 1.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 291
+  category: null
+  is_label: false
+elevator e-048 stuck between floors 2 and 9. no one inside (:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 292
+  category: null
+  is_label: false
+elevator making grinding noise. annex east main elevator.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 293
+  category: null
+  is_label: false
+elevator making grinding noise. annex west main elevator.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 294
+  category: null
+  is_label: false
+elevator out of order again parking garage:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 295
+  category: null
+  is_label: false
+elevator/escalator:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.85
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 296
+  category: Elevator
+  is_label: true
+emergency exit sign burnt out, hq floor 2 6 floor east stair:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 297
+  category: null
+  is_label: false
+emergency exit sign burnt out, main office 8 floor east stai:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 298
+  category: null
+  is_label: false
+exterminator:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 299
+  category: Pest Control
+  is_label: true
+faucet in remote site alpha kitchen won't turn off completel:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 300
+  category: null
+  is_label: false
+fire alarm:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 301
+  category: Fire Safety
+  is_label: true
+fire extinguisher expired in hallway near room 470, tower b.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 302
+  category: null
+  is_label: false
+fire safety:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 303
+  category: Fire Safety
+  is_label: true
+fire/safety:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 304
+  category: Fire Safety
+  is_label: true
+furniture request — need 3 additional chairs for room 778.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 305
+  category: null
+  is_label: false
+general:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.92
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 306
+  category: General Maintenance
+  is_label: true
+general maintenance:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 307
+  category: General Maintenance
+  is_label: true
+heating cooling:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 308
+  category: HVAC
+  is_label: true
+heating/cooling:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 309
+  category: HVAC
+  is_label: true
+hot water not working in annex east. multiple sinks affected:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 310
+  category: null
+  is_label: false
+hot water not working in building 7. multiple sinks affected:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 311
+  category: null
+  is_label: false
+hot water not working in cafeteria block. multiple sinks aff:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 312
+  category: null
+  is_label: false
+hot water not working in tower b. multiple sinks affected.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 313
+  category: null
+  is_label: false
+housekeeping:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 314
+  category: Cleaning
+  is_label: true
+hvac:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 315
+  category: HVAC
+  is_label: true
+hvac system:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 316
+  category: HVAC
+  is_label: true
+it:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 317
+  category: IT & Network
+  is_label: true
+it support:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.96
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 318
+  category: IT & Network
+  is_label: true
+it/network:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.97
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 319
+  category: IT & Network
+  is_label: true
+janitorial:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.97
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 320
+  category: Cleaning
+  is_label: true
+lift:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 321
+  category: Elevator
+  is_label: true
+maintenance:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 322
+  category: General Maintenance
+  is_label: true
+misc:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 323
+  category: General Maintenance
+  is_label: true
+need access card programmed for new employee starting monday:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 324
+  category: null
+  is_label: false
+need more outlets in conf room 387:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 325
+  category: null
+  is_label: false
+need more outlets in conf room 861:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 326
+  category: null
+  is_label: false
+network:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 327
+  category: IT & Network
+  is_label: true
+network jack at desk 301 not active. new hire needs connecti:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 328
+  category: null
+  is_label: false
+'null':
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 329
+  category: null
+  is_label: false
+other:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 330
+  category: General Maintenance
+  is_label: true
+pest:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 331
+  category: Pest Control
+  is_label: true
+pest control:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 332
+  category: Pest Control
+  is_label: true
+pipe burst:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.85
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 333
+  category: Plumbing
+  is_label: true
+plumbing:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 334
+  category: Plumbing
+  is_label: true
+plumbing issue:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 335
+  category: Plumbing
+  is_label: true
+power:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 336
+  category: Electrical
+  is_label: true
+power issue:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.9
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 337
+  category: Electrical
+  is_label: true
+restrooms on 2 floor haven't been serviced today.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 338
+  category: null
+  is_label: false
+restrooms on 7 floor haven't been serviced today.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 339
+  category: null
+  is_label: false
+security:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 340
+  category: Security & Access
+  is_label: true
+security camera a-040 offline since yesterday. covers parkin:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 341
+  category: null
+  is_label: false
+security camera e-049 offline since yesterday. covers parkin:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 342
+  category: null
+  is_label: false
+security systems:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 343
+  category: Security & Access
+  is_label: true
+smoke detector beeping tower a:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 344
+  category: null
+  is_label: false
+sprinkler:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 345
+  category: Fire Safety
+  is_label: true
+temperature control issue in conference room 379. the thermo:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 346
+  category: null
+  is_label: false
+temperature control issue in conference room 618. the thermo:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 347
+  category: null
+  is_label: false
+test:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 348
+  category: null
+  is_label: false
+the ac unit on 6 floor is not working. room temp is around 5:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 349
+  category: null
+  is_label: false
+toilet in 7 floor men's restroom is overflowing. urgent.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 350
+  category: null
+  is_label: false
+trash overflowing in kitchen area annex west:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 351
+  category: null
+  is_label: false
+trash overflowing in kitchen area cafeteria block:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 352
+  category: null
+  is_label: false
+trash overflowing in kitchen area hq floor 1:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 353
+  category: null
+  is_label: false
+unit c-050 cycling on and off every few minutes. coils might:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 354
+  category: null
+  is_label: false
+unit h-008 cycling on and off every few minutes. coils might:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 355
+  category: null
+  is_label: false
+unknown:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.99
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 356
+  category: null
+  is_label: false
+vertical transport:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.95
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 357
+  category: Elevator
+  is_label: true
+vpn issues from hq floor 1 conference room. can't connect to:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 358
+  category: null
+  is_label: false
+vpn issues from remote site alpha conference room. can't con:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 359
+  category: null
+  is_label: false
+vpn issues from warehouse north conference room. can't conne:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 360
+  category: null
+  is_label: false
+wasp nest forming on hq floor 3 exterior, near entrance.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 361
+  category: null
+  is_label: false
+water issue:
+  _provenance:
+    agent: classifier
+    approved_by: devansh
+    confidence: 0.85
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 362
+  category: Plumbing
+  is_label: true
+water leak detected in ceiling tiles, building 7 room 805. a:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 363
+  category: null
+  is_label: false
+water/plumbing:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 364
+  category: Plumbing
+  is_label: true
+wheelchair-accessible elevator in annex east has expired ins:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 365
+  category: null
+  is_label: false
+wifi:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 366
+  category: IT & Network
+  is_label: true
+wifi down on 4 floor, building 7. multiple users affected.:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 367
+  category: null
+  is_label: false
+window cracked hq floor 2 6 floor:
+  _provenance:
+    agent: classifier
+    approved_by: auto
+    confidence: 0.98
+    model: gpt-5-mini
+    prompt_version: v1
+    proposal_id: 368
+  category: null
+  is_label: false

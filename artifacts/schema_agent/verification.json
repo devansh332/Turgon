@@ -1,0 +1,6 @@
+{
+  "ddl_executes": true,
+  "transform_executes": false,
+  "transform_error": "Error tokenizing '   END) AS cost",
+  "vs_hand_built_silver": {}
+}

@@ -1,0 +1,20 @@
+value,canonical,resolution,label_source
+a. garcia,Alex Garcia,initials,human
+admin,,system,human
+alex garcia,Alex Garcia,exact,human
+c. taylor,Chris Taylor,initials,human
+d. kim,David Kim,initials,human
+david kim,David Kim,exact,human
+e. brown,Emily Brown,initials,human
+j. doe,Jane Doe,initials,human
+j. smith,John Smith,initials,human
+jane doe,Jane Doe,exact,human
+k. lee,Karen Lee,initials,human
+l. chen,Lisa Chen,initials,human
+m. johnson,M. Johnson,ambiguous,human
+michael johnson,Michael Johnson,exact,human
+r. martinez,R. Martinez,ambiguous,human
+s. williams,Sarah Williams,initials,human
+system,,system,human
+t. wilson,Tom Wilson,initials,human
+test,,system,human

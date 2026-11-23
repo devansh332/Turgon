@@ -1,0 +1,82 @@
+# Human-owned reference data and policies used by silver. Small, reviewable, version-controlled.
+
+priority_map:            # lower-cased, trimmed raw value -> standard priority
+  critical: critical
+  crit: critical
+  high: high
+  hi: high
+  urgent!!!: high        # informal urgency words: treated as high, flagged priority_informal
+  asap: high
+  medium: medium
+  med: medium
+  normal: medium
+  low: low
+  lo: low
+informal_priorities: [urgent!!!, asap]
+
+status_map:
+  open: Open
+  in progress: In Progress
+  escalated: Escalated
+  pending vendor: Pending Vendor
+  resolved: Resolved
+  closed: Closed
+open_statuses: [Open, In Progress, Escalated, Pending Vendor]
+status_rank:             # used to pick a winner when one ticket id arrives more than once
+  Open: 1
+  In Progress: 2
+  Escalated: 2
+  Pending Vendor: 2
+  Resolved: 3
+  Closed: 3
+
+# Business policy, not derived from data: the supplied sla_hours are statistically independent of
+# priority in this extract, so a missing SLA is filled from this table and marked sla_source=policy.
+sla_policy_hours:
+  critical: 4
+  high: 8
+  medium: 24
+  low: 72
+valid_sla_hours: [4, 8, 24, 48, 72]
+
+buildings:
+  - Annex East
+  - Annex West
+  - Building 3
+  - Building 7
+  - Cafeteria Block
+  - Data Center 1
+  - HQ Floor 1
+  - HQ Floor 2
+  - HQ Floor 3
+  - Main Office
+  - Parking Garage
+  - Remote Site Alpha
+  - Remote Site Beta
+  - Tower A
+  - Tower B
+  - Warehouse North
+  - Warehouse South
+
+assignees:               # canonical name -> type and the categories a specialist is expected to handle
+  ABC Mechanical: {type: vendor, scope: [HVAC, Plumbing, Elevator]}
+  CityWide Electric: {type: vendor, scope: [Electrical]}
+  PestPro Services: {type: vendor, scope: [Pest Control]}
+  vendor tech: {type: vendor, scope: null}
+  Joe (in-house): {type: in_house, scope: null}
+  maintenance team: {type: in_house, scope: null}
+  overnight crew: {type: in_house, scope: null}
+
+# Values that carry no information. Matched case-insensitively after trimming.
+null_tokens: ["", "n/a", "na", "null", "none", "???", "unknown", "tbd", "-", "."]
+date_null_tokens: ["asap", "tbd", "not a date", "never", "pending", "00/00/0000"]
+cost_null_tokens: ["error"]
+sentinel_numbers: ["-1", "999"]
+
+# Markers of test or garbage records. A row with junk_threshold or more junk fields is quarantined.
+junk_tokens: ["test", "test building", "asdf", "asdfasdfasdf", "delete me", "duplicate entry please delete",
+              "admin", "system"]
+junk_threshold: 3
+
+# Earliest plausible ticket timestamp; the latest is the moment the file was ingested.
+min_plausible_date: "2023-01-01"

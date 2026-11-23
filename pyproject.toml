@@ -1,0 +1,39 @@
+[project]
+name = "medallion"
+version = "0.1.0"
+description = "AI-assisted bronze/silver/gold pipeline for facility support tickets"
+requires-python = ">=3.10"
+dependencies = [
+    "psycopg[binary]>=3.2",
+    "pydantic>=2.7",
+    "openai>=1.40",
+    "pyyaml>=6.0",
+    "sqlglot>=25.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.5"]
+
+[project.scripts]
+medallion = "medallion.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"medallion.agents" = ["prompts/*.md"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["db: needs a running Postgres (TEST_DATABASE_URL)"]

@@ -1,0 +1,70 @@
+template,is_description,category,is_safety_issue,urgency,label_source
+bugs in office {building},true,Pest Control,false,medium,developer
+cockroach sighting in {building} restroom. third report this month.,true,Pest Control,false,medium,developer
+"wasp nest forming on {building} exterior, near entrance.",true,Pest Control,true,high,developer
+network jack at desk {n} not active. new hire needs connectivity.,true,IT & Network,false,medium,developer
+"fire alarm triggered in {building}, {n} floor. no visible fire. possible sensor malfunction.",true,Fire Safety,true,high,developer
+"fire extinguisher expired in hallway near room {n}, {building}.",true,Fire Safety,true,medium,developer
+smoke detector beeping {building},true,Fire Safety,true,medium,developer
+elevator {asset} stuck between floors {n} and {n}. no one inside (confirmed).,true,Elevator,false,high,developer
+elevator buttons for floor {n} not responding. {building}.,true,Elevator,false,medium,developer
+sprinkler head damaged in {building} storage room {n}. needs replacement before it leaks.,true,Fire Safety,true,high,developer
+"ant infestation in {building}, {n} floor break room. getting worse.",true,Pest Control,false,medium,developer
+security camera {asset} offline since yesterday. covers parking lot sector {n}.,true,Security & Access,false,high,developer
+mice spotted in {building} kitchen area. droppings found in cabinets.,true,Pest Control,true,high,developer
+"emergency exit sign burnt out, {building} {n} floor east stairwell.",true,Fire Safety,true,high,developer
+vpn issues from {building} conference room. can't connect to corporate.,true,IT & Network,false,medium,developer
+wheelchair-accessible elevator in {building} has expired inspection certificate (noticed today).,true,Elevator,true,high,developer
+elevator making grinding noise. {building} main elevator.,true,Elevator,false,medium,developer
+trash overflowing in kitchen area {building},true,Cleaning,false,medium,developer
+toilet in {n} floor men's restroom is overflowing. urgent.,true,Plumbing,false,high,developer
+internet extremely slow in {building}. speed test showing {n} mbps down.,true,IT & Network,false,medium,developer
+tailgating incident reported at {building} loading dock. review camera footage.,true,Security & Access,false,high,developer
+elevator out of order again {building},true,Elevator,false,high,developer
+door {n} won't lock. handle mechanism seems broken.,true,Security & Access,false,high,developer
+bird droppings on {building} entrance canopy. looks unprofessional.,true,Cleaning,false,low,developer
+"carpet stain in executive suite, {building}. need professional cleaning.",true,Cleaning,false,low,developer
+conference room {n} needs deep cleaning before client visit tomorrow.,true,Cleaning,false,medium,developer
+need access card programmed for new employee starting {day}. {building} {n} floor.,true,Security & Access,false,medium,developer
+"wifi down on {n} floor, {building}. multiple users affected.",true,IT & Network,false,high,developer
+"carpet coming up at seam, trip hazard, {building} {n} floor.",true,General Maintenance,true,high,developer
+badge reader at {building} main entrance not working. staff can't get in.,true,Security & Access,false,high,developer
+restrooms on {n} floor haven't been serviced today.,true,Cleaning,false,medium,developer
+"water leak detected in ceiling tiles, {building} room {n}. appears to be coming from above.",true,Plumbing,false,high,developer
+alarm going off {building} no apparent reason,true,Security & Access,false,medium,developer
+printer on {n} floor not connecting to network. model hp {asset}.,true,IT & Network,false,low,developer
+power outlet not working at desk {n}. tried multiple devices.,true,Electrical,false,low,developer
+pipe burst,true,Plumbing,false,critical,developer
+spill in {building} lobby. slip hazard.,true,Cleaning,true,high,developer
+half the lights on {n} floor are out. {building}.,true,Electrical,false,high,developer
+need more outlets in conf room {n},true,Electrical,false,low,developer
+paint peeling in {building} lobby. looks bad for visitors.,true,General Maintenance,false,low,developer
+"sparking outlet in {building} — do not use, taped off",true,Electrical,true,high,developer
+faucet in {building} kitchen won't turn off completely. constant drip.,true,Plumbing,false,medium,developer
+hot water not working in {building}. multiple sinks affected.,true,Plumbing,false,medium,developer
+window cracked {building} {n} floor,true,General Maintenance,false,medium,developer
+"ceiling tile falling in {building} hallway, {n} floor. hazard.",true,General Maintenance,true,high,developer
+"lights flickering in {building}, {n} floor hallway. has been happening for {n} days.",true,Electrical,false,medium,developer
+breaker keeps tripping in server room {n}. critical — affects production systems.,true,Electrical,false,critical,developer
+parking lot pothole getting larger. near spot {n}.,true,General Maintenance,true,medium,developer
+wifi password not working,true,IT & Network,false,low,developer
+"drain clogged in janitor closet, {n} floor.",true,Plumbing,false,medium,developer
+"door handle broken on room {n}, {building}.",true,General Maintenance,false,low,developer
+furniture request — need {n} additional chairs for room {n}.,true,General Maintenance,false,low,developer
+hvac broken again in {building}. its really hot,true,HVAC,false,high,developer
+water everywhere in bathroom {building},true,Plumbing,true,high,developer
+the ac unit on {n} floor is not working. room temp is around {n}f. please fix asap.,true,HVAC,false,high,developer
+cold,true,HVAC,false,low,developer
+"heating system making loud banging noises in {building}, {n} floor. started yesterday.",true,HVAC,false,medium,developer
+unit {asset} cycling on and off every few minutes. coils might be frozen.,true,HVAC,false,medium,developer
+a/c leaking water onto the carpet near cubicle {n}. {building}.,true,HVAC,false,medium,developer
+please check the hvac — multiple complaints from staff on {n}th floor about humidity.,true,HVAC,false,medium,developer
+temperature control issue in conference room {n}. the thermostat reads {n} degrees but it feels much colder.,true,HVAC,false,low,developer
+"emergency lighting test failed in stairwell a, {building}.",true,Electrical,true,high,developer
+"emergency lighting test failed in stairwell north, {building}.",true,Electrical,true,high,developer
+duplicate entry please delete,false,,false,,developer
+asdfasdfasdf,false,,false,,developer
+ignore this row,false,,false,,developer
+cleaning,false,,false,,developer
+plumbing issue,false,,false,,developer
+elevator/escalator,false,,false,,developer

@@ -5,7 +5,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SQL_DIR = ROOT / "sql"
 SEEDS_DIR = ROOT / "seeds"
-ARTIFACTS_DIR = ROOT / "artifacts"
 EVALS_DIR = ROOT / "evals"
 DEFAULT_SOURCE = ROOT / "data" / "raw_tickets.csv"
 
@@ -49,4 +48,3 @@ class Config:
 # Alert thresholds (observability). Kept in code so changes go through review.
 MAX_QUARANTINE_RATE = 0.02
 MAX_NULL_RATE_DELTA = 0.05
-MAX_LLM_FAILURE_RATE = 0.10

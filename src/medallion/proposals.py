@@ -15,7 +15,7 @@ from medallion import seeds
 from medallion.log import event
 
 # Evidence that changes between runs without changing the decision itself.
-EVIDENCE_KEYS = {"confidence", "affected_rows", "samples", "verification", "sql_valid"}
+EVIDENCE_KEYS = {"confidence", "affected_rows", "samples", "sql_valid", "safety_rule", "_provenance"}
 
 
 def decision_of(payload: dict) -> dict:
@@ -44,12 +44,6 @@ def propose(
     decision = decision_of(payload)
     if approved and {k: approved.get(k) for k in decision} != decision:
         risk = "high"  # changing something already approved is a recategorization: always reviewed
-    previously_rejected = conn.execute(
-        "SELECT 1 FROM meta.agent_proposals WHERE kind=%s AND item_key=%s AND status='rejected' LIMIT 1",
-        (kind, item_key),
-    ).fetchone()
-    if previously_rejected:
-        risk = "high"  # a human said no to this item once; never auto-approve a second attempt
     status = "auto_approved" if risk == "low" and confidence >= auto_threshold else "pending"
     row = conn.execute(
         """INSERT INTO meta.agent_proposals
@@ -58,6 +52,7 @@ def propose(
            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,
                    CASE WHEN %s = 'auto_approved' THEN now() END,
                    CASE WHEN %s = 'auto_approved' THEN 'auto' END)
+           -- the same decision proposed again keeps its earlier status, so a rejection sticks
            ON CONFLICT (kind, item_key, payload_hash) DO UPDATE SET rationale = EXCLUDED.rationale
            RETURNING proposal_id, status""",
         (
@@ -89,12 +84,14 @@ def list_proposals(conn: psycopg.Connection, status: str | None = "pending") -> 
 
 
 def decide(conn: psycopg.Connection, ids: list[int], status: str, by: str) -> int:
-    """Approve or reject pending proposals. A reviewer can also revoke an auto-approval by rejecting it."""
-    decidable = ["pending", "auto_approved"] if status == "rejected" else ["pending"]
+    """Approve pending proposals, or reject/revoke pending and approved decisions."""
+    if status not in {"approved", "rejected"}:
+        raise ValueError("decision must be approved or rejected")
+    eligible = ["pending", "approved", "auto_approved"] if status == "rejected" else ["pending"]
     rows = conn.execute(
         """UPDATE meta.agent_proposals SET status=%s, decided_at=now(), decided_by=%s
            WHERE proposal_id = ANY(%s) AND status = ANY(%s) RETURNING proposal_id""",
-        (status, by, ids, decidable),
+        (status, by, ids, eligible),
     ).fetchall()
     conn.commit()
     event("proposals_decided", status=status, by=by, ids=[r["proposal_id"] for r in rows])
@@ -102,32 +99,27 @@ def decide(conn: psycopg.Connection, ids: list[int], status: str, by: str) -> in
 
 
 def export_seeds(conn: psycopg.Connection) -> dict[str, int]:
-    """Merge approved proposals into the agent-owned seed files (latest decision per item wins).
+    """Merge decisions into seeds; a revoked decision removes its matching seed, without restoring older ones.
 
     Merging rather than regenerating keeps seeds valid after a database reset: git is the source of truth."""
     rows = conn.execute(
         """SELECT DISTINCT ON (kind, item_key) *
-           FROM meta.agent_proposals WHERE status IN ('approved', 'auto_approved')
+           FROM meta.agent_proposals WHERE status IN ('approved', 'auto_approved', 'rejected')
            ORDER BY kind, item_key, decided_at DESC, proposal_id DESC"""
-    ).fetchall()
-    revoked = conn.execute(
-        "SELECT kind, item_key, proposal_id FROM meta.agent_proposals WHERE status = 'rejected'"
     ).fetchall()
     written: dict[str, int] = {}
     for kind, filename in seeds.AGENT_OWNED.items():
         items = [r for r in rows if r["kind"] == kind]
-        data = seeds.load(filename)
-        dropped = [
-            r["item_key"]
-            for r in revoked
-            if r["kind"] == kind
-            and data.get(r["item_key"], {}).get("_provenance", {}).get("proposal_id") == r["proposal_id"]
-        ]
-        for key in dropped:  # the applied decision was revoked by a reviewer
-            del data[key]
-        if not items and not dropped:
+        if not items:
             continue
+        data = seeds.load(filename)
         for r in items:
+            if r["status"] == "rejected":
+                existing = data.get(r["item_key"])
+                # Match the decision, not a database-local id: ids can be reused after a database reset.
+                if existing is not None and _hash(existing) == r["payload_hash"]:
+                    del data[r["item_key"]]
+                continue
             data[r["item_key"]] = {
                 **r["payload"],
                 "_provenance": {

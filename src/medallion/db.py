@@ -25,12 +25,3 @@ def read_only(conn: psycopg.Connection, timeout_ms: int = 5000):
         conn.execute(f"SET LOCAL statement_timeout = {int(timeout_ms)}")
         conn.execute("SET LOCAL ROLE medallion_agent")
         yield conn
-
-
-@contextmanager
-def sandbox(conn: psycopg.Connection, timeout_ms: int = 10000):
-    """Like read_only, but writable inside silver_proposed (for verifying agent DDL). Always rolled back."""
-    with conn.transaction(force_rollback=True):
-        conn.execute(f"SET LOCAL statement_timeout = {int(timeout_ms)}")
-        conn.execute("SET LOCAL ROLE medallion_agent")
-        yield conn

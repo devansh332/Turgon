@@ -79,7 +79,8 @@ def cmd_proposals(cfg: Config, args) -> None:
                 ids += [p["proposal_id"] for p in proposals.list_proposals(conn) if p["kind"] == args.all_kind]
             n = proposals.decide(conn, ids, "approved" if args.action == "approve" else "rejected", args.by)
             print(f"{'approved' if args.action == 'approve' else 'rejected'} {n} proposal(s)")
-        proposals.export_seeds(conn)
+        if args.action != "list":
+            proposals.export_seeds(conn)
 
 
 def cmd_metrics(cfg: Config, args) -> None:
@@ -129,7 +130,9 @@ def main() -> None:
     p.set_defaults(func=cmd_agents)
 
     p = sub.add_parser("proposals", help="review agent proposals (human-in-the-loop gate)")
-    p.add_argument("action", choices=["list", "approve", "reject", "export"])
+    p.add_argument(
+        "action", choices=["list", "approve", "reject", "export"], help="reject also revokes approved decisions"
+    )
     p.add_argument("ids", nargs="*")
     p.add_argument("--status", default="pending", help="pending | approved | auto_approved | rejected | all")
     p.add_argument("--all-kind", help="act on every pending proposal of this kind")

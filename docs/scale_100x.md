@@ -8,7 +8,7 @@ is mostly a list of *what to swap*, not *what to redesign*.
 
 | Design choice | Why it survives 100x |
 |---|---|
-| **The LLM labels distinct values, not rows.** Silver joins the approved seeds. | LLM cost grows with *new vocabulary*, not volume. 10k rows hold 99 labels, 98 templates and 33 people. At 1M rows from similar systems we would expect perhaps 2–5x the vocabulary, not 100x. Daily loads only pay for values never seen before (`classifier.run` skips values already in the seeds, `meta.llm_item_cache` skips values already answered, and `meta.llm_cache` catches repeated calls). |
+| **The LLM labels distinct values, not rows.** Silver joins the approved seeds. | LLM cost grows with *new vocabulary*, not volume. 10k rows hold 99 labels, 98 templates and 33 people. At 1M rows from similar systems we would expect perhaps 2–5x the vocabulary, not 100x. Daily loads only pay for values never seen before (`classifier.run` skips values already in the seeds, and `meta.llm_cache` catches repeated calls). |
 | **No LLM in the silver build.** | The heavy path is pure SQL plus Python transforms, fully repeatable and cheap to rebuild. The models never sit in the critical path; they propose, offline. |
 | **Bronze is skipped by file hash; silver is incremental by watermark** (plus a 48h replay window), MERGE-based | A daily load touches only that day's rows. A full rebuild happens only when `rules_version` changes. |
 | **Gold is rebuilt atomically from silver** | It is cheap while the marts are small aggregates. |
@@ -47,6 +47,8 @@ million per-row calls is not a daily job at any reasonable concurrency.
 Controls already in the code:
 
 - the cache, keyed by prompt name, prompt version, model and payload;
+- fresh evals bypass that cache and tag calls with a UUID, keeping measurement independent of historical
+  spend and other running agents;
 - `LLM_DAILY_BUDGET_USD`, which raises an alert when crossed;
 - a cost-per-1k-rows metric that the promotion gate checks, so a "better" model that is 20% more expensive
   fails promotion unless someone makes a deliberate decision.

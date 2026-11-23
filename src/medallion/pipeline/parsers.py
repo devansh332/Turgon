@@ -138,7 +138,7 @@ def _strip_buildings(text: str, buildings: list[str]) -> tuple[str, str | None]:
 def description_template(text: str | None, buildings: list[str]) -> str:
     """Reduce a description to its template, e.g. 'elevator {asset} stuck between floors {n} and {n}...'.
 
-    The 10k descriptions collapse to ~70 templates, so the classifier labels templates, not rows."""
+    The 10k descriptions collapse to ~100 templates, so the classifier labels templates, not rows."""
     t, _ = _strip_buildings(text or "", buildings)
     t = _ASSET.sub("{asset}", t)
     t = _NUMBER.sub("{n}", t)

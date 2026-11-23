@@ -27,7 +27,8 @@ def profile_bronze(conn: psycopg.Connection, top_n: int = 15, columns: list[str]
             (top_n,),
         ).fetchall()
         shapes = conn.execute(
-            f"SELECT {_SHAPE.format(c=c)} AS s, count(*) AS n FROM bronze.tickets_raw "
+            f"SELECT {_SHAPE.format(c=c)} AS s, count(*) AS n, min({c}) AS example_min, max({c}) AS example_max "
+            "FROM bronze.tickets_raw "
             "GROUP BY 1 ORDER BY 2 DESC LIMIT 12"
         ).fetchall()
         col = {
@@ -35,7 +36,18 @@ def profile_bronze(conn: psycopg.Connection, top_n: int = 15, columns: list[str]
             "distinct_values": base["distinct_values"],
             "top_values": [(r["v"], r["n"]) for r in top],
             "shapes": [(r["s"], r["n"]) for r in shapes],
+            "shape_examples": [(r["s"], r["example_min"], r["example_max"]) for r in shapes],
         }
+        if c in {"created_at", "resolved_at"}:
+            col["numeric_date_order"] = conn.execute(
+                rf"""SELECT count(*) FILTER (WHERE a > 12) AS first_part_over_12,
+                            count(*) FILTER (WHERE b > 12) AS second_part_over_12
+                     FROM (SELECT CASE WHEN {c} ~ '^\d{{2}}[-/]\d{{2}}[-/]\d{{4}}'
+                                       THEN substring({c}, 1, 2)::int END AS a,
+                                  CASE WHEN {c} ~ '^\d{{2}}[-/]\d{{2}}[-/]\d{{4}}'
+                                       THEN substring({c}, 4, 2)::int END AS b
+                           FROM bronze.tickets_raw) d"""
+            ).fetchone()
         if total and base["numeric_like"] / total > 0.3:
             stats = conn.execute(
                 f"""WITH v AS (SELECT replace(btrim({c}), '$', '')::numeric AS x FROM bronze.tickets_raw
@@ -62,3 +74,23 @@ def profile_bronze(conn: psycopg.Connection, top_n: int = 15, columns: list[str]
             }
         out["columns"][c] = col
     return out
+
+
+def cross_column_profile(conn: psycopg.Connection) -> dict:
+    """Bounded raw examples of cross-column patterns, independent of approved cleaning seeds or eval labels."""
+    checks = {
+        "long_category_short_description": "length(btrim(category)) > 40 "
+        "AND length(btrim(description)) BETWEEN 1 AND 25",
+        "open_with_resolution_date": "lower(btrim(status)) IN ('open', 'in progress', 'escalated', 'pending vendor') "
+        "AND nullif(btrim(resolved_at), '') IS NOT NULL",
+    }
+    evidence = {}
+    for name, predicate in checks.items():
+        evidence[name] = {
+            "rows": conn.execute(f"SELECT count(*) AS n FROM bronze.tickets_raw WHERE {predicate}").fetchone()["n"],
+            "samples": conn.execute(
+                "SELECT category, description, status, created_at, resolved_at FROM bronze.tickets_raw "
+                f"WHERE {predicate} ORDER BY _row_hash LIMIT 5"
+            ).fetchall(),
+        }
+    return evidence

@@ -125,16 +125,6 @@ def _complete(llm: LLMClient, items: list, key_of, field: str, call) -> list:
     return list(results.values())
 
 
-def _item_cached(llm: LLMClient, prompt: str, items: list, key_of, field: str, item_schema, size: int, call) -> list:
-    """Serve items already labelled under this prompt version and model from the item cache, batch the rest."""
-    model = llm.cfg.llm_model_bulk
-    hits = llm.cached_items(prompt, model, [key_of(i) for i in items], item_schema)
-    todo = [i for i in items if key_of(i) not in hits]
-    fresh = [r for b in batched(todo, size) for r in _complete(llm, b, key_of, field, call)]
-    llm.cache_items(prompt, model, {getattr(r, field): r for r in fresh})
-    return [hits[key_of(i)] for i in items if key_of(i) in hits] + fresh
-
-
 def classify_labels(llm: LLMClient, labels: list[tuple[str, int]], taxonomy: dict) -> list:
     schema = models(taxonomy)["label"]
 
@@ -142,8 +132,7 @@ def classify_labels(llm: LLMClient, labels: list[tuple[str, int]], taxonomy: dic
         payload = {"taxonomy": taxonomy["categories"], "labels": [{"label": v, "tickets": n} for v, n in batch]}
         return llm.structured(agent="classifier", prompt_name="category_labels", payload=payload, schema=schema).results
 
-    item = schema.model_fields["results"].annotation.__args__[0]
-    return _item_cached(llm, "category_labels", labels, lambda i: i[0], "label", item, LABEL_BATCH, call)
+    return [r for b in batched(labels, LABEL_BATCH) for r in _complete(llm, b, lambda i: i[0], "label", call)]
 
 
 def classify_templates(llm: LLMClient, templates: list[dict], taxonomy: dict) -> list:
@@ -158,10 +147,10 @@ def classify_templates(llm: LLMClient, templates: list[dict], taxonomy: dict) ->
             schema=schema,
         ).results
 
-    item = schema.model_fields["results"].annotation.__args__[0]
-    return _item_cached(
-        llm, "description_templates", templates, lambda i: i["template"], "template", item, TEMPLATE_BATCH, call
-    )
+    out = []
+    for batch in batched(templates, TEMPLATE_BATCH):
+        out += _complete(llm, batch, lambda i: i["template"], "template", call)
+    return out
 
 
 def resolve_people(llm: LLMClient, people: list[tuple[str, int]], taxonomy: dict) -> list:
@@ -268,12 +257,14 @@ def run(conn: psycopg.Connection, llm: LLMClient, auto_threshold: float, refresh
     templates = [t for k, t in sorted(distinct_templates(conn, buildings).items()) if refresh or k not in s.templates]
     for r in classify_templates(llm, templates, taxonomy):
         payload = r.model_dump(exclude={"template", "rationale"})
+        safety_rule = rule_template(r.template)["is_safety_issue"]
+        payload["safety_rule"] = safety_rule
         propose(
             "description_template",
             r.template,
             payload,
             r,
-            "high" if r.urgency == "critical" or r.is_safety_issue else "low",
+            "high" if r.urgency == "critical" or r.is_safety_issue or safety_rule != r.is_safety_issue else "low",
             "description_templates",
         )
 

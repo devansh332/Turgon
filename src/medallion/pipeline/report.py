@@ -5,6 +5,8 @@ import json
 import psycopg
 
 from medallion import seeds
+from medallion.pipeline.parsers import parse_ticket_id
+from medallion.pipeline.silver import TICKET_NUMBER_SQL
 
 
 def _table(rows: list[dict], columns: list[str]) -> str:
@@ -53,9 +55,9 @@ def metrics(conn: psycopg.Connection) -> str:
     out += "\n== Top silver data-quality flags\n"
     out += _table(
         conn.execute(
-            """SELECT flag, count(*) AS tickets,
-                  round(100.0 * count(*) / (SELECT count(*) FROM silver.tickets), 1) AS pct
-           FROM silver.tickets, unnest(dq_flags) AS flag GROUP BY 1 ORDER BY 2 DESC LIMIT 25"""
+            """SELECT flag, tickets, round(100 * rate, 1) AS pct FROM meta.dq_flag_counts
+           WHERE run_id = (SELECT run_id FROM meta.dq_flag_counts ORDER BY measured_at DESC LIMIT 1)
+           ORDER BY tickets DESC LIMIT 25"""
         ).fetchall(),
         ["flag", "tickets", "pct"],
     )
@@ -101,13 +103,69 @@ def metrics(conn: psycopg.Connection) -> str:
     return out
 
 
+def _gold_lineage(conn: psycopg.Connection, t: dict) -> str:
+    f = conn.execute("SELECT * FROM gold.ticket_facts WHERE ticket_key = %s", (t["ticket_key"],)).fetchone()
+    if not f:
+        return f"  gold: not in gold, a content duplicate of {t['duplicate_of_key']}\n\n"
+    run = conn.execute(
+        "SELECT * FROM meta.pipeline_runs WHERE stage = 'gold' AND status = 'succeeded' "
+        "ORDER BY started_at DESC LIMIT 1"
+    ).fetchone()
+    sla = conn.execute(
+        """SELECT month, tickets, sla_breached FROM gold.sla_compliance
+           WHERE month = date_trunc('month', %s::timestamp)::date AND category = %s AND priority = %s""",
+        (f["created_at"], f["category"], f["priority"]),
+    ).fetchone()
+    vendor = conn.execute(
+        "SELECT tickets, total_cost FROM gold.vendor_performance "
+        "WHERE assignee = %s AND category IS NOT DISTINCT FROM %s",
+        (f["assignee"], f["category"]),
+    ).fetchone()
+    backlog = conn.execute(
+        "SELECT min(day) AS first, max(day) AS last FROM gold.backlog_daily WHERE building = %s AND day >= %s::date "
+        "AND (%s OR day < %s::date)",
+        (f["building"], f["created_at"], f["is_open"], f["resolved_at"]),
+    ).fetchone()
+    out = (
+        f"  gold.ticket_facts             {f['category']} | {f['priority']} | {f['building']} | {f['assignee']}"
+        f" | sla_breached={f['sla_breached']} | as_of {f['as_of']}\n"
+    )
+    if sla:
+        out += (
+            f"  gold.sla_compliance           {sla['month']} / {f['category']} / {f['priority']}:"
+            f" {sla['tickets']} tickets, {sla['sla_breached']} breached\n"
+        )
+    if vendor:
+        out += (
+            f"  gold.vendor_performance       {f['assignee']} / {f['category']}:"
+            f" {vendor['tickets']} tickets, cost {vendor['total_cost']}\n"
+        )
+    if not (f["is_open"] or f["resolution_hours"] is not None):
+        out += "  gold.backlog_daily            not counted (closed without a usable resolved_at)\n"
+    elif backlog["first"]:
+        out += (
+            f"  gold.backlog_daily            {f['building']}: in open backlog"
+            f" {backlog['first']} to {backlog['last']}\n"
+        )
+    else:
+        out += f"  gold.backlog_daily            {f['building']}: opened and closed the same day\n"
+    if run:
+        out += (
+            f"  built by gold run {run['run_id']} at {run['started_at']:%Y-%m-%d %H:%M:%S}"
+            f" (git {run['git_sha']}, rules {run['rules_version']}) from sql/gold/*.sql\n"
+        )
+    return out + "\n"
+
+
 def lineage(conn: psycopg.Connection, key: str) -> str:
+    key = parse_ticket_id(key)[0] or key
     t = conn.execute("SELECT * FROM silver.tickets WHERE ticket_key = %s", (key,)).fetchone()
     q = conn.execute("SELECT * FROM quarantine.tickets_rejected WHERE ticket_key = %s", (key,)).fetchall()
     if not t and not q:
         return f"{key}: not found in silver or quarantine"
     out = f"\n== {key}\n"
     if t:
+        out += _gold_lineage(conn, t)
         shown = [
             "category_raw",
             "category",
@@ -139,10 +197,10 @@ def lineage(conn: psycopg.Connection, key: str) -> str:
             if entry:
                 out += f"  {name} rule: {json.dumps(entry.get('_provenance'), default=str)}\n"
     versions = conn.execute(
-        """SELECT b._bronze_id, b._source_file, b._row_number, b._ingested_at, b._batch_id, b.status, b._row_hash
-           FROM bronze.tickets_raw b WHERE upper(btrim(b.ticket_id)) = %s OR b._bronze_id = %s
-           ORDER BY b._bronze_id""",
-        (key, t["_bronze_id"] if t else -1),
+        f"""SELECT _bronze_id, _source_file, _row_number, _ingested_at, _batch_id, status, _row_hash
+            FROM bronze.tickets_raw WHERE {TICKET_NUMBER_SQL} = %s OR _bronze_id = ANY(%s)
+            ORDER BY _bronze_id""",
+        (parse_ticket_id(key)[1], ([t["_bronze_id"]] if t else []) + [r["_bronze_id"] for r in q]),
     ).fetchall()
     out += "\n  bronze versions (winner marked *):\n"
     for v in versions:

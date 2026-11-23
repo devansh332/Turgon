@@ -1,0 +1,31 @@
+{
+  "defaults": {
+    "ticket_id": "TKT-70001",
+    "created_at": "2024-01-01T10:00:00",
+    "resolved_at": "",
+    "category": "Electrical",
+    "priority": "high",
+    "status": "Open",
+    "building": "Annex West",
+    "description": "Power outlet not working at desk 3. Tried multiple devices.",
+    "submitted_by": "Jane Doe",
+    "assigned_to": "CityWide Electric",
+    "resolution_notes": "",
+    "cost": "120.00",
+    "sla_hours": "8"
+  },
+  "cases": [
+    {"id": "valid_open", "overrides": {}, "issues": []},
+    {"id": "valid_closed", "overrides": {"status": "Closed", "resolved_at": "2024-01-01T12:00:00", "resolution_notes": "Replaced outlet."}, "issues": []},
+    {"id": "valid_currency", "overrides": {"cost": "$1,234.50"}, "issues": []},
+    {"id": "valid_zero_cost", "overrides": {"cost": "0"}, "issues": []},
+    {"id": "bad_id", "overrides": {"ticket_id": "not-an-id"}, "issues": ["ticket_id:invalid_identifier"]},
+    {"id": "created_placeholder", "overrides": {"created_at": "TBD"}, "issues": ["created_at:placeholder_values"]},
+    {"id": "resolved_placeholder", "overrides": {"resolved_at": "pending"}, "issues": ["resolved_at:placeholder_values"]},
+    {"id": "cost_sentinel", "overrides": {"cost": "-1"}, "issues": ["cost:sentinel_values"]},
+    {"id": "sla_sentinel", "overrides": {"sla_hours": "999"}, "issues": ["sla_hours:sentinel_values"]},
+    {"id": "unassigned", "overrides": {"assigned_to": " "}, "issues": ["assigned_to:missing_values"]},
+    {"id": "blank_priority", "overrides": {"priority": ""}, "issues": ["priority:missing_values"]},
+    {"id": "swapped_fields", "overrides": {"category": "Power outlet not working at desk 3. Tried multiple devices.", "description": "Electrical"}, "issues": ["category:swapped_fields"]}
+  ]
+}

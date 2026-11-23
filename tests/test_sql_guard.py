@@ -40,10 +40,6 @@ def test_rejects_writes_even_inside_cte():
         validate_select("WITH x AS (DELETE FROM bronze.tickets_raw RETURNING *) SELECT * FROM x")
 
 
-def test_cte_names_only_shadow_within_their_scope():
-    validate_select("WITH b AS (SELECT * FROM bronze.tickets_raw) SELECT count(*) FROM b")
+def test_cte_names_cannot_shadow_a_forbidden_table():
     with pytest.raises(UnsafeSQL, match="table not allowed: pg_authid"):
-        validate_select(
-            "SELECT (SELECT count(*) FROM (WITH pg_authid AS (SELECT 1) SELECT * FROM pg_authid) s),"
-            " (SELECT count(*) FROM pg_authid)"
-        )
+        validate_select("WITH pg_authid AS (SELECT 1) SELECT * FROM pg_authid")

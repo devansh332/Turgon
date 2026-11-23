@@ -4,9 +4,8 @@ Scores every agent against a hand-labelled golden set AND a rules-only baseline,
 format compliance and cost from meta.llm_calls. A prompt or model change is promoted only if it does not
 lose accuracy or format compliance, and does not raise cost per 1k rows by more than 20%.
 
-Agents are called with the full distinct vocabulary, which is exactly what a cold-start production run sends
-(no seeds yet), so after one such run an unchanged prompt is served from the cache and costs nothing; a new
-prompt version misses the cache and is measured for real.
+Agents are called with the full distinct vocabulary, bypassing the cache. Each evaluation has its own UUID,
+and operational metrics include only calls belonging to that run, even when other agents run concurrently.
 
 Leakage: any golden item quoted in a prompt's "## Examples" section is excluded from the `held_out` scores,
 and the promotion gate uses those. `agent` scores over every golden item are reported for completeness.
@@ -17,8 +16,10 @@ import json
 import re
 import statistics
 from datetime import datetime, timezone
+from uuid import UUID, uuid4
 
 from medallion.agents import classifier, dq_agent
+from medallion.agents.dq_eval import score_predicates
 from medallion.agents.llm import LLMClient, load_prompt
 from medallion.config import EVALS_DIR, Config
 from medallion.db import connect
@@ -32,8 +33,10 @@ GATED = [
     "templates.held_out.category_accuracy",
     "templates.held_out.urgency_within_one",
     "templates.held_out.safety_accuracy",
+    "templates.held_out.safety_recall",
     "people.held_out.resolution_accuracy",
     "dq.agent.recall",
+    "dq.predicates.f1",
     "ops.first_try_valid_rate",
 ]
 _URGENCY = {"low": 0, "medium": 1, "high": 2, "critical": 3}
@@ -93,6 +96,9 @@ def score_templates(pred: dict, gold: list[dict]) -> dict:
         "safety_accuracy": _rate(
             [pred.get(g["template"], {}).get("is_safety_issue") == _bool(g["is_safety_issue"]) for g in real]
         ),
+        "safety_recall": _rate(
+            [pred.get(g["template"], {}).get("is_safety_issue") is True for g in real if _bool(g["is_safety_issue"])]
+        ),
         "urgency_exact": _rate([urgency_gap(g) == 0 for g in real]),
         "urgency_within_one": _rate([urgency_gap(g) <= 1 for g in real]),
     }
@@ -131,14 +137,12 @@ def score_dq(rules: list[dict], gold: list[dict]) -> dict:
     }
 
 
-def ops_metrics(conn, llm: LLMClient, prompts: list[str], rows_covered: int) -> dict:
-    calls = []
-    for name in prompts:
-        calls += conn.execute(
-            """SELECT prompt_name, attempts, ok, latency_ms, input_tokens, output_tokens, cost_usd FROM meta.llm_calls
-               WHERE NOT cache_hit AND prompt_name = %s AND prompt_version = %s AND model = ANY(%s)""",
-            (name, llm.prompt_version(name), [llm.cfg.llm_model_bulk, llm.cfg.llm_model_reasoning]),
-        ).fetchall()
+def ops_metrics(conn, eval_run_id: UUID, rows_covered: int) -> dict:
+    calls = conn.execute(
+        """SELECT prompt_name, attempts, ok, latency_ms, input_tokens, output_tokens, cost_usd FROM meta.llm_calls
+           WHERE NOT cache_hit AND eval_run_id = %s""",
+        (eval_run_id,),
+    ).fetchall()
     latencies = sorted(c["latency_ms"] for c in calls if c["ok"])
     classifier_cost = sum(
         float(c["cost_usd"])
@@ -180,7 +184,8 @@ def gate(candidate: dict, promoted: dict | None) -> list[str]:
 
 
 def run(cfg: Config, promote: bool = False) -> bool:
-    llm, s = LLMClient(cfg), Seeds()
+    eval_run_id = uuid4()
+    llm, s = LLMClient(cfg, eval_run_id=eval_run_id), Seeds()
     taxonomy, buildings = s.taxonomy, s.ref["buildings"]
     with connect(cfg) as conn:
         rows = conn.execute("SELECT count(*) AS n FROM bronze.tickets_raw").fetchone()["n"]
@@ -194,6 +199,7 @@ def run(cfg: Config, promote: bool = False) -> bool:
         rules, _ = dq_agent.propose_rules(conn, llm)
         with connect(cfg) as sandbox:
             rule_rows = [r.model_dump() | {"affected_rows": dq_agent.dry_run(sandbox, r.predicate)[0]} for r in rules]
+            predicate_scores = score_predicates(sandbox, rule_rows)
 
         g_labels, g_templates, g_people = _csv("category_labels.csv"), _csv("templates.csv"), _csv("people.csv")
         h_labels = held_out(g_labels, "label", "category_labels")
@@ -204,6 +210,7 @@ def run(cfg: Config, promote: bool = False) -> bool:
         rule_templates = {g["template"]: classifier.rule_template(g["template"]) for g in g_templates}
         rule_people = classifier.rule_people([v for v, _ in people], junk)
         results = {
+            "eval_run_id": str(eval_run_id),
             "evaluated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
             "model": {"bulk": cfg.llm_model_bulk, "reasoning": cfg.llm_model_reasoning, "base_url": cfg.llm_base_url},
             "prompt_versions": {
@@ -227,8 +234,8 @@ def run(cfg: Config, promote: bool = False) -> bool:
                 "rules_baseline": score_people(rule_people, g_people),
                 "rules_baseline_held_out": score_people(rule_people, h_people),
             },
-            "dq": {"agent": score_dq(rule_rows, _csv("dq_issues.csv"))},
-            "ops": ops_metrics(conn, llm, ["category_labels", "description_templates", "people", "dq_rules"], rows),
+            "dq": {"agent": score_dq(rule_rows, _csv("dq_issues.csv")), "predicates": predicate_scores},
+            "ops": ops_metrics(conn, eval_run_id, rows),
         }
 
     RESULTS.mkdir(parents=True, exist_ok=True)
@@ -240,8 +247,6 @@ def run(cfg: Config, promote: bool = False) -> bool:
         "failures": failures,
         "compared_with": promoted.get("evaluated_at") if promoted else None,
     }
-    stamp = results["evaluated_at"].replace(":", "").replace("-", "")[:15]
-    (RESULTS / f"{stamp}_{cfg.llm_model_bulk.replace(':', '-')}.json").write_text(json.dumps(results, indent=2))
     (RESULTS / "latest.json").write_text(json.dumps(results, indent=2))
     if promote and not failures:
         promoted_path.write_text(json.dumps(results, indent=2))

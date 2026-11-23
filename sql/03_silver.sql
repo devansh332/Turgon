@@ -75,6 +75,8 @@ CREATE TABLE IF NOT EXISTS silver.tickets (
 
 CREATE INDEX IF NOT EXISTS tickets_content_hash_idx ON silver.tickets (content_hash);
 CREATE INDEX IF NOT EXISTS tickets_created_at_idx ON silver.tickets (created_at);
+-- with created_at, lets gold.ticket_facts find as_of (max of both) by index instead of scanning silver
+CREATE INDEX IF NOT EXISTS tickets_resolved_at_idx ON silver.tickets (resolved_at);
 
 CREATE TABLE IF NOT EXISTS quarantine.tickets_rejected (
     _bronze_id     bigint PRIMARY KEY,
@@ -85,3 +87,5 @@ CREATE TABLE IF NOT EXISTS quarantine.tickets_rejected (
     _rules_version text NOT NULL,
     rejected_at    timestamptz NOT NULL DEFAULT now()
 );
+
+CREATE INDEX IF NOT EXISTS tickets_rejected_ticket_key_idx ON quarantine.tickets_rejected (ticket_key);

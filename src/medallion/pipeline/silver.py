@@ -128,6 +128,109 @@ class Context:
         return bool(entry and entry.get("is_label") and entry.get("category"))
 
 
+def _resolve_category(
+    ctx: Context, category_raw: str | None, description: str | None, flags: list[str]
+) -> tuple[str, str, dict | None, str | None]:
+    """The label if it is a known label, else the description template, else Unclassified."""
+    label = ctx.labels.get(fold(category_raw)) if ctx.is_label(category_raw) else None
+    template_key = description_template(description, ctx.buildings) if (description or "").strip() else None
+    template = ctx.templates.get(template_key) if template_key else None
+    template_known = template is not None
+    if template and not template.get("is_description"):
+        template = None  # junk text or a bare category word: nothing to enrich
+    if label:
+        category, category_source = label["category"], "label"
+        if template and template["category"] != category:
+            flags.append("category:conflicts_with_description")
+    elif template:
+        category, category_source = template["category"], "description"
+    else:
+        category, category_source = "Unclassified", "unmapped"
+    if (category_raw or "").strip() and not label:
+        flags.append("category:unmapped_label")
+    if template_key and not template_known:
+        flags.append("description:unmapped_template")
+    return category, category_source, template, template_key
+
+
+def _resolve_building(ctx: Context, raw: str | None, described: str | None, flags: list[str]) -> str | None:
+    b_fold = fold(raw)
+    building = ctx.building_by_fold.get(b_fold)
+    if building is None:
+        if b_fold in ctx.junk_tokens:
+            flags.append("building:junk")
+        elif b_fold not in ctx.null_tokens:
+            flags.append("building:unrecognized")
+        if described:
+            building = described
+            flags.append("building:from_description")
+    elif described and described != building:
+        flags.append("building:conflicts_with_description")
+    return building
+
+
+def _resolve_priority(
+    ctx: Context, raw: str | None, urgency: str | None, flags: list[str]
+) -> tuple[str | None, str | None, str]:
+    ref = ctx.seeds.ref
+    p_fold = fold(raw)
+    priority = ref["priority_map"].get(p_fold)
+    if priority is None and p_fold not in ctx.null_tokens:
+        flags.append("priority:unrecognized")
+    if p_fold in ref["informal_priorities"]:
+        flags.append("priority:informal")
+    priority_effective = priority or urgency
+    priority_source = "given" if priority else ("inferred" if urgency else "unknown")
+    if priority and urgency and _RANK[urgency] - _RANK[priority] >= 2:
+        flags.append("priority:understated_vs_description")
+    return priority, priority_effective, priority_source
+
+
+def _resolve_submitter(ctx: Context, raw: str | None, flags: list[str]) -> tuple[str | None, str]:
+    sub_fold = fold(raw)
+    person = ctx.people.get(sub_fold)
+    if not sub_fold or sub_fold in ctx.null_tokens:
+        submitted_by, resolution = None, "missing"
+    elif sub_fold in ctx.junk_tokens:
+        submitted_by, resolution = None, "system"
+    elif person:
+        submitted_by, resolution = person["canonical"], person["resolution"]
+    else:
+        submitted_by, resolution = raw.strip().title(), "unreviewed"
+    if resolution == "ambiguous":
+        flags.append("submitted_by:ambiguous")
+    return submitted_by, resolution
+
+
+def _resolve_assignee(
+    ctx: Context, raw: str | None, category: str, flags: list[str]
+) -> tuple[str | None, str | None, bool | None]:
+    a_fold = fold(raw)
+    assignee, assignee_type, scope_match = None, None, None
+    if a_fold in ctx.assignees:
+        assignee, spec = ctx.assignees[a_fold]
+        assignee_type = spec["type"]
+        if spec["scope"]:
+            scope_match = category in spec["scope"]
+            if not scope_match:
+                flags.append("assignee:outside_scope")
+    elif a_fold and a_fold not in ctx.null_tokens:
+        flags.append("assignee:unrecognized")
+    return assignee, assignee_type, scope_match
+
+
+def _quarantine_reasons(
+    ctx: Context, b: dict, created: datetime | None, flags: list[str], rule_flags: list[str]
+) -> list[str]:
+    reasons = []
+    if sum(fold(b[c]) in ctx.junk_tokens for c in SOURCE_COLUMNS) >= ctx.seeds.ref["junk_threshold"]:
+        reasons.append("junk_record")
+    if created is None:
+        reasons.append("created_at_" + next(f.split(":")[1] for f in flags if f.startswith("created_at:")))
+    reasons += [f[len("quarantine:") :] for f in rule_flags if f.startswith("quarantine:")]
+    return reasons
+
+
 def transform(b: dict, ctx: Context, rule_flags: list[str] = ()) -> tuple[dict, list[str]]:
     """One bronze row -> (silver record, quarantine reasons). Pure apart from reading seeds."""
     ref = ctx.seeds.ref
@@ -154,51 +257,11 @@ def transform(b: dict, ctx: Context, rule_flags: list[str] = ()) -> tuple[dict, 
     resolved, f = parse_ts(b["resolved_at"], **ts_kwargs)
     add("resolved_at", f)
 
-    # category: the label if it is a known label, else the description template, else Unclassified
-    label = ctx.labels.get(fold(category_raw)) if ctx.is_label(category_raw) else None
-    template_key = description_template(description, ctx.buildings) if (description or "").strip() else None
-    template = ctx.templates.get(template_key) if template_key else None
-    template_known = template is not None
-    if template and not template.get("is_description"):
-        template = None  # junk text or a bare category word: nothing to enrich
-    if label:
-        category, category_source = label["category"], "label"
-        if template and template["category"] != category:
-            flags.append("category:conflicts_with_description")
-    elif template:
-        category, category_source = template["category"], "description"
-    else:
-        category, category_source = "Unclassified", "unmapped"
-    if (category_raw or "").strip() and not label:
-        flags.append("category:unmapped_label")
-    if template_key and not template_known:
-        flags.append("description:unmapped_template")
-
+    category, category_source, template, template_key = _resolve_category(ctx, category_raw, description, flags)
     loc = extract_location(description, ctx.buildings)
-    b_fold = fold(b["building"])
-    building = ctx.building_by_fold.get(b_fold)
-    if building is None:
-        if b_fold in ctx.junk_tokens:
-            flags.append("building:junk")
-        elif b_fold not in ctx.null_tokens:
-            flags.append("building:unrecognized")
-        if loc["building"]:
-            building = loc["building"]
-            flags.append("building:from_description")
-    elif loc["building"] and loc["building"] != building:
-        flags.append("building:conflicts_with_description")
-
-    p_fold = fold(b["priority"])
-    priority = ref["priority_map"].get(p_fold)
-    if priority is None and p_fold not in ctx.null_tokens:
-        flags.append("priority:unrecognized")
-    if p_fold in ref["informal_priorities"]:
-        flags.append("priority:informal")
+    building = _resolve_building(ctx, b["building"], loc["building"], flags)
     urgency = template.get("urgency") if template else None
-    priority_effective = priority or urgency
-    priority_source = "given" if priority else ("inferred" if urgency else "unknown")
-    if priority and urgency and _RANK[urgency] - _RANK[priority] >= 2:
-        flags.append("priority:understated_vs_description")
+    priority, priority_effective, priority_source = _resolve_priority(ctx, b["priority"], urgency, flags)
 
     s_fold = fold(b["status"])
     status = ref["status_map"].get(s_fold)
@@ -216,30 +279,8 @@ def transform(b: dict, ctx: Context, rule_flags: list[str] = ()) -> tuple[dict, 
     if is_open is False and created and resolved and resolved >= created:
         resolution_hours = Decimal((resolved - created).total_seconds() / 3600).quantize(Decimal("0.01"))
 
-    sub_fold = fold(b["submitted_by"])
-    person = ctx.people.get(sub_fold)
-    if not sub_fold or sub_fold in ctx.null_tokens:
-        submitted_by, submitter_resolution = None, "missing"
-    elif sub_fold in ctx.junk_tokens:
-        submitted_by, submitter_resolution = None, "system"
-    elif person:
-        submitted_by, submitter_resolution = person["canonical"], person["resolution"]
-    else:
-        submitted_by, submitter_resolution = b["submitted_by"].strip().title(), "unreviewed"
-    if submitter_resolution == "ambiguous":
-        flags.append("submitted_by:ambiguous")
-
-    a_fold = fold(b["assigned_to"])
-    assignee, assignee_type, scope_match = None, None, None
-    if a_fold in ctx.assignees:
-        assignee, spec = ctx.assignees[a_fold]
-        assignee_type = spec["type"]
-        if spec["scope"]:
-            scope_match = category in spec["scope"]
-            if not scope_match:
-                flags.append("assignee:outside_scope")
-    elif a_fold and a_fold not in ctx.null_tokens:
-        flags.append("assignee:unrecognized")
+    submitted_by, submitter_resolution = _resolve_submitter(ctx, b["submitted_by"], flags)
+    assignee, assignee_type, scope_match = _resolve_assignee(ctx, b["assigned_to"], category, flags)
 
     notes = parse_notes(b["resolution_notes"])
     if notes["outcome"] in RESOLVED_OUTCOMES and is_open:
@@ -253,14 +294,7 @@ def transform(b: dict, ctx: Context, rule_flags: list[str] = ()) -> tuple[dict, 
     sla_effective = sla or policy_sla
     sla_source = "given" if sla else ("policy" if policy_sla else "unknown")
 
-    junk_score = sum(fold(b[c]) in ctx.junk_tokens for c in SOURCE_COLUMNS)
-    reasons = []
-    if junk_score >= ref["junk_threshold"]:
-        reasons.append("junk_record")
-    if created is None:
-        reasons.append("created_at_" + next(f.split(":")[1] for f in flags if f.startswith("created_at:")))
-    reasons += [f[len("quarantine:") :] for f in rule_flags if f.startswith("quarantine:")]
-
+    reasons = _quarantine_reasons(ctx, b, created, flags, rule_flags)
     record = {
         "ticket_key": key,
         "ticket_number": number,
@@ -360,8 +394,6 @@ def apply_schema_migrations(conn: psycopg.Connection, seeds: Seeds, run_id) -> l
     and the extraction expression must pass the same SQL guard as DQ predicates."""
     applied = []
     for item_key, m in sorted(seeds.schema_migrations.items()):
-        if "silver_column" not in m:  # the full silver-schema proposal is a design artefact, not a migration
-            continue
         column, pg_type = m["silver_column"], str(m["pg_type"]).lower().strip()
         valid_name = re.fullmatch(r"[a-z][a-z0-9_]{1,62}", column) and column not in SILVER_COLUMNS
         if not valid_name or pg_type not in MIGRATION_TYPES:
@@ -414,6 +446,8 @@ def _copy(conn: psycopg.Connection, table: str, columns: list[str], rows: list[l
 def build(cfg: Config, full: bool = False) -> None:
     seeds, rv = Seeds(), rules_version()
     with stage_run(cfg, "silver", rv) as run, connect(cfg) as conn:
+        # Keep the new-row and related-version queries on the same snapshot during overlapping ingestion.
+        conn.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
         bronze_rows, full, since = _scope(conn, cfg, rv, full)
         run.details.update(mode="full" if full else "incremental", replay_from=since)
         if not bronze_rows:
@@ -504,7 +538,8 @@ def build(cfg: Config, full: bool = False) -> None:
                  AND t.duplicate_of_key IS DISTINCT FROM NULLIF(r.keep, t.ticket_key)"""
         ).rowcount
 
-        high = conn.execute("SELECT max(_ingested_at) AS m FROM bronze.tickets_raw").fetchone()["m"]
+        # A new batch may commit while we transform. Only acknowledge rows actually read by this build.
+        high = max(b["_ingested_at"] for b in bronze_rows)
         conn.execute(
             """INSERT INTO meta.watermarks (stage, high_watermark, rules_version) VALUES ('silver', %s, %s)
                ON CONFLICT (stage) DO UPDATE SET high_watermark = EXCLUDED.high_watermark,

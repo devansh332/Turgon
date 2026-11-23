@@ -1,4 +1,5 @@
 import json
+import os
 import time
 import uuid
 from contextlib import contextmanager
@@ -6,28 +7,9 @@ from dataclasses import dataclass, field
 
 from psycopg.types.json import Jsonb
 
-from medallion.config import ROOT, Config
+from medallion.config import Config
 from medallion.db import connect
 from medallion.log import event
-
-
-def git_sha() -> str:
-    """Read HEAD without needing the git binary (the container doesn't ship one)."""
-    head = ROOT / ".git" / "HEAD"
-    if not head.exists():
-        return "unknown"
-    ref = head.read_text().strip()
-    if not ref.startswith("ref: "):
-        return ref[:12]
-    ref_path = ROOT / ".git" / ref[5:]
-    if ref_path.exists():
-        return ref_path.read_text().strip()[:12]
-    packed = ROOT / ".git" / "packed-refs"
-    if packed.exists():
-        for line in packed.read_text().splitlines():
-            if line.endswith(ref[5:]):
-                return line.split()[0][:12]
-    return "uncommitted"
 
 
 @dataclass
@@ -51,7 +33,7 @@ def stage_run(cfg: Config, stage: str, rules_version: str | None = None, prompt_
         log_conn.execute(
             """INSERT INTO meta.pipeline_runs (run_id, stage, status, git_sha, rules_version, prompt_versions)
                VALUES (%s, %s, 'running', %s, %s, %s)""",
-            (run.run_id, stage, git_sha(), rules_version, Jsonb(prompt_versions or {})),
+            (run.run_id, stage, os.environ.get("GIT_SHA") or "unknown", rules_version, Jsonb(prompt_versions or {})),
         )
         event("stage_started", stage=stage, run_id=run.run_id)
         status, error = "succeeded", None

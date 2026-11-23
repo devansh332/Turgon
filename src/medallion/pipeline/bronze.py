@@ -95,6 +95,8 @@ def ingest(cfg: Config, path: Path) -> None:
     sha = file_sha256(path)
     with stage_run(cfg, "bronze", rules_version()) as run, connect(cfg) as conn:
         run.details.update(source_file=source, file_sha256=sha)
+        # Serialize writers so _ingested_at follows commit order; silver's watermark relies on it.
+        conn.execute("LOCK TABLE bronze.tickets_raw IN SHARE ROW EXCLUSIVE MODE")
         if conn.execute("SELECT 1 FROM meta.ingested_files WHERE file_sha256=%s", (sha,)).fetchone():
             run.skipped = True
             run.details["reason"] = "file content already ingested"

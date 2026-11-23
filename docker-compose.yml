@@ -32,6 +32,7 @@ services:
       LLM_PRICE_OUTPUT_PER_1M: ${LLM_PRICE_OUTPUT_PER_1M:-2.00}
       LLM_DAILY_BUDGET_USD: ${LLM_DAILY_BUDGET_USD:-2.00}
       REPLAY_WINDOW_HOURS: ${REPLAY_WINDOW_HOURS:-48}
+      GIT_SHA: ${GIT_SHA:-unknown}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:

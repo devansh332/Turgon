@@ -5,24 +5,16 @@ appear as a separate thread: the approved proposal, with its model, prompt versi
 real trace of **TKT-5528** after `make run` and `make demo-incremental`. The second batch carried a late
 "Closed" update for this ticket.
 
-## 1. Gold: the number a stakeholder sees
-
-`gold.sla_compliance` for February 2025, Electrical, low priority: **13 tickets, 11 breached**. TKT-5528 is
-one of the 2 that met SLA.
-
-```
-gold.ticket_facts  TKT-5528 | Electrical | low | Annex West | CityWide Electric | sla_breached=f | as_of 2025-07-29 19:20:20
-```
-
-Gold is rebuilt from silver on every run (`meta.pipeline_runs`, stage `gold`). It holds no state of its
-own, so its lineage *is* silver's lineage, plus the gold SQL file in git.
-
-## 2. Silver: which rules, which run, which agent decisions
-
-`make lineage KEY=TKT-5528`:
+`make lineage KEY=TKT-5528` prints all of it, from gold down to the CSV lines:
 
 ```
 == TKT-5528
+  gold.ticket_facts             Electrical | low | Annex West | CityWide Electric | sla_breached=False | as_of 2025-07-29 19:20:20
+  gold.sla_compliance           2025-02-01 / Electrical / low: 13 tickets, 11 breached
+  gold.vendor_performance       CityWide Electric / Electrical: 109 tickets, cost 400463.43
+  gold.backlog_daily            Annex West: in open backlog 2025-02-17 to 2025-02-17
+  built by gold run b86cc1dd-... at 2026-11-23 11:16:11 (git 852fe60f6c0e-dirty, rules f08e80ac0830) from sql/gold/*.sql
+
   silver.category_raw           power issue
   silver.category               Electrical
   silver.category_source        label
@@ -38,16 +30,25 @@ own, so its lineage *is* silver's lineage, plus the gold SQL file in git.
   silver.duplicate_of_key       None
   silver.dq_flags               []
 
-  last changed by silver run a2839329-... at 2026-11-23 09:50:14 (rules f9228bf85bbe)
+  last changed by silver run 08b76f90-... at 2026-11-23 11:16:10 (git 852fe60f6c0e-dirty, rules f08e80ac0830)
   category label rule: {"agent": "classifier", "approved_by": "auto", "confidence": 0.9, "model": "gpt-5-mini",
                         "prompt_version": "v1", "proposal_id": 337}
   description template rule: {"agent": "classifier", "approved_by": "auto", "confidence": 0.9, "model": "gpt-5-mini",
                         "prompt_version": "v1", "proposal_id": 601}
 
   bronze versions (winner marked *):
-    bronze_id=14    data/raw_tickets.csv:15          ingested=2026-11-23 09:49:09 batch=ac9a63ef status='Open'
-  * bronze_id=10281 tests/fixtures/batch2_drift.csv:2 ingested=2026-11-23 09:50:14 batch=69f81267 status='Closed'
+    bronze_id=14 data/raw_tickets.csv:15 ingested=2026-11-23 11:15:49 batch=1b26f682 status='Open' hash=9f838cda43
+  * bronze_id=10281 tests/fixtures/batch2_drift.csv:2 ingested=2026-11-23 11:16:10 batch=170a0084 status='Closed' hash=c39c0c86c2
 ```
+
+## 1. Gold: the number a stakeholder sees
+
+In February 2025, Electrical, low priority, 13 tickets: 12 have a measurable SLA, 11 breached it, and
+TKT-5528 is the one that met it. Each mart line above is the mart row this ticket is counted in. Gold is
+rebuilt from silver on every run by the SQL in `sql/gold/`, so the gold run (with its git sha and rules
+version) plus the silver lineage below fully explains a gold number.
+
+## 2. Silver: which rules, which run, which agent decisions
 
 - **Who and what:** the silver run id links to `meta.pipeline_runs`, which records the git sha,
   `rules_version` (a hash of every seed file and of the silver transform code), the row counts, and

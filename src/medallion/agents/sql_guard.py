@@ -43,17 +43,6 @@ class UnsafeSQL(ValueError):
     pass
 
 
-def _visible_ctes(node: exp.Expression) -> set[str]:
-    names: set[str] = set()
-    parent = node.parent
-    while parent is not None:
-        with_ = (parent.args.get("with_") or parent.args.get("with")) if isinstance(parent, exp.Query) else None
-        if with_ is not None:
-            names |= {cte.alias for cte in with_.expressions}
-        parent = parent.parent
-    return names
-
-
 def validate_select(sql: str, allowed_tables: set[str] = ALLOWED_TABLES) -> str:
     try:
         statements = [s for s in sqlglot.parse(sql, read="postgres") if s is not None]
@@ -66,11 +55,8 @@ def validate_select(sql: str, allowed_tables: set[str] = ALLOWED_TABLES) -> str:
         raise UnsafeSQL("write or DDL operations are not allowed")
     for table in tree.find_all(exp.Table):
         qualified = f"{table.db}.{table.name}" if table.db else table.name
-        if qualified in allowed_tables:
-            continue
-        if not table.db and table.name in _visible_ctes(table):
-            continue
-        raise UnsafeSQL(f"table not allowed: {qualified}")
+        if qualified not in allowed_tables:  # CTE names included: agents only write single expressions
+            raise UnsafeSQL(f"table not allowed: {qualified}")
     for fn in tree.find_all(exp.Func):
         if isinstance(fn, exp.Anonymous):
             if fn.name.lower() not in ALLOWED_ANONYMOUS:

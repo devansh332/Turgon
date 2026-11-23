@@ -8,11 +8,12 @@ import time
 from collections.abc import Iterator
 from pathlib import Path
 from typing import TypeVar
+from uuid import UUID
 
 from openai import OpenAI, OpenAIError
 from pydantic import BaseModel, ValidationError
 
-from medallion.config import MAX_LLM_FAILURE_RATE, Config
+from medallion.config import Config
 from medallion.db import connect
 from medallion.log import event
 
@@ -42,10 +43,11 @@ def batched(items: list, size: int) -> Iterator[list]:
 
 
 class LLMClient:
-    def __init__(self, cfg: Config):
+    def __init__(self, cfg: Config, *, eval_run_id: UUID | None = None):
         if not cfg.llm_api_key:
             raise LLMError("LLM_API_KEY is not set; agents need an LLM (see .env.example)")
         self.cfg = cfg
+        self.eval_run_id = eval_run_id
         self.client = OpenAI(base_url=cfg.llm_base_url, api_key=cfg.llm_api_key, timeout=600, max_retries=2)
         self.log_conn = connect(cfg, autocommit=True)  # bookkeeping survives an agent's rollback
 
@@ -55,12 +57,6 @@ class LLMClient:
     def cost(self, tokens_in: int, tokens_out: int) -> float:
         return (tokens_in * self.cfg.llm_price_in + tokens_out * self.cfg.llm_price_out) / 1_000_000
 
-    def _alert(self, severity: str, check: str, message: str, value, threshold) -> None:
-        self.log_conn.execute(
-            "INSERT INTO meta.alerts (severity, check_name, message, value, threshold) VALUES (%s,%s,%s,%s,%s)",
-            (severity, check, message, value, threshold),
-        )
-
     def _check_budget(self, pending_usd: float = 0.0) -> None:
         """Spend logged today plus what the current call has already used must stay under the budget."""
         spent = self.log_conn.execute(
@@ -68,66 +64,20 @@ class LLMClient:
         ).fetchone()["s"]
         total = float(spent) + pending_usd
         if total >= self.cfg.llm_daily_budget_usd:
-            self._alert(
-                "error",
-                "llm_budget",
-                "daily LLM budget exhausted; agent calls refused",
-                total,
-                self.cfg.llm_daily_budget_usd,
+            self.log_conn.execute(
+                """INSERT INTO meta.alerts (severity, check_name, message, value, threshold)
+                   VALUES ('error', 'llm_budget', 'daily LLM budget exhausted; agent calls refused', %s, %s)""",
+                (total, self.cfg.llm_daily_budget_usd),
             )
             raise BudgetExceeded(f"daily LLM budget ${self.cfg.llm_daily_budget_usd} reached (${total:.4f})")
-
-    def check_failure_rate(self, agent: str) -> float:
-        """Share of today's non-cached calls for this agent that ended without valid output."""
-        row = self.log_conn.execute(
-            """SELECT count(*) AS n, count(*) FILTER (WHERE NOT ok) AS failed FROM meta.llm_calls
-               WHERE agent = %s AND NOT cache_hit AND created_at >= current_date""",
-            (agent,),
-        ).fetchone()
-        rate = row["failed"] / row["n"] if row["n"] else 0.0
-        if rate > MAX_LLM_FAILURE_RATE:
-            self._alert(
-                "warning",
-                "llm_failure_rate",
-                f"{agent}: {row['failed']}/{row['n']} calls failed today",
-                rate,
-                MAX_LLM_FAILURE_RATE,
-            )
-        return rate
-
-    def cached_items(self, prompt_name: str, model: str, keys: list[str], schema: type[T]) -> dict[str, T]:
-        """Previously validated per-item results for this prompt version and model."""
-        rows = self.log_conn.execute(
-            """SELECT item_key, response FROM meta.llm_item_cache
-               WHERE prompt_name=%s AND prompt_version=%s AND model=%s AND item_key = ANY(%s)""",
-            (prompt_name, self.prompt_version(prompt_name), model, keys),
-        ).fetchall()
-        out: dict[str, T] = {}
-        for r in rows:
-            try:
-                out[r["item_key"]] = schema.model_validate(r["response"])
-            except ValidationError:
-                continue  # schema tightened since it was cached: ask again
-        return out
-
-    def cache_items(self, prompt_name: str, model: str, items: dict[str, BaseModel]) -> None:
-        version = self.prompt_version(prompt_name)
-        for key, result in items.items():
-            self.log_conn.execute(
-                """INSERT INTO meta.llm_item_cache (prompt_name, prompt_version, model, item_key, response)
-                   VALUES (%s,%s,%s,%s,%s)
-                   ON CONFLICT (prompt_name, prompt_version, model, item_key)
-                   DO UPDATE SET response = EXCLUDED.response""",
-                (prompt_name, version, model, key, result.model_dump_json()),
-            )
 
     def _log_call(
         self, agent, prompt_name, version, model, *, cache_hit, ok, attempts=0, tokens=(0, 0), latency_ms=0, error=None
     ) -> None:
         self.log_conn.execute(
             """INSERT INTO meta.llm_calls (agent, prompt_name, prompt_version, model, cache_hit, ok, attempts,
-                 input_tokens, output_tokens, cost_usd, latency_ms, error)
-               VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+                 input_tokens, output_tokens, cost_usd, latency_ms, error, eval_run_id)
+               VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
             (
                 agent,
                 prompt_name,
@@ -141,6 +91,7 @@ class LLMClient:
                 self.cost(*tokens),
                 latency_ms,
                 error,
+                self.eval_run_id,
             ),
         )
 
@@ -160,7 +111,8 @@ class LLMClient:
         user = json.dumps(payload, ensure_ascii=False, sort_keys=True, default=str)
         key = hashlib.sha256(f"{prompt_name}|{version}|{model}|{user}".encode()).hexdigest()
 
-        if use_cache:
+        # Evals measure a fresh candidate, including retries and cost, rather than a cached prior run.
+        if use_cache and self.eval_run_id is None:
             hit = self.log_conn.execute("SELECT response FROM meta.llm_cache WHERE cache_key=%s", (key,)).fetchone()
             if hit:
                 try:
@@ -184,6 +136,23 @@ class LLMClient:
         started = time.monotonic()
         error = None
         attempt = 0
+
+        def log_uncached(ok: bool, attempts: int, error: str | None = None) -> int:
+            latency = int((time.monotonic() - started) * 1000)
+            self._log_call(
+                agent,
+                prompt_name,
+                version,
+                model,
+                cache_hit=False,
+                ok=ok,
+                attempts=attempts,
+                tokens=(tokens_in, tokens_out),
+                latency_ms=latency,
+                error=error,
+            )
+            return latency
+
         try:
             for attempt in range(1, max_attempts + 1):
                 self._check_budget(self.cost(tokens_in, tokens_out))  # repair retries are paid calls too
@@ -202,24 +171,13 @@ class LLMClient:
                     repair = f"That output failed validation: {error}. Return the corrected JSON object only."
                     messages += [{"role": "assistant", "content": text}, {"role": "user", "content": repair}]
                     continue
-                latency = int((time.monotonic() - started) * 1000)
                 self.log_conn.execute(
                     """INSERT INTO meta.llm_cache (cache_key, agent, prompt_name, prompt_version, model, response)
                        VALUES (%s,%s,%s,%s,%s,%s)
                        ON CONFLICT (cache_key) DO UPDATE SET response = EXCLUDED.response, created_at = now()""",
                     (key, agent, prompt_name, version, model, result.model_dump_json()),
                 )
-                self._log_call(
-                    agent,
-                    prompt_name,
-                    version,
-                    model,
-                    cache_hit=False,
-                    ok=True,
-                    attempts=attempt,
-                    tokens=(tokens_in, tokens_out),
-                    latency_ms=latency,
-                )
+                latency = log_uncached(ok=True, attempts=attempt)
                 event(
                     "llm_call",
                     agent=agent,
@@ -233,33 +191,8 @@ class LLMClient:
                 )
                 return result
         except (OpenAIError, BudgetExceeded) as exc:
-            error = f"{type(exc).__name__}: {str(exc)[:300]}"
-            self._log_call(
-                agent,
-                prompt_name,
-                version,
-                model,
-                cache_hit=False,
-                ok=False,
-                attempts=attempt,
-                tokens=(tokens_in, tokens_out),
-                latency_ms=int((time.monotonic() - started) * 1000),
-                error=error,
-            )
-            self.check_failure_rate(agent)
+            log_uncached(ok=False, attempts=attempt, error=f"{type(exc).__name__}: {str(exc)[:300]}")
             raise
 
-        self._log_call(
-            agent,
-            prompt_name,
-            version,
-            model,
-            cache_hit=False,
-            ok=False,
-            attempts=max_attempts,
-            tokens=(tokens_in, tokens_out),
-            latency_ms=int((time.monotonic() - started) * 1000),
-            error=error,
-        )
-        self.check_failure_rate(agent)
+        log_uncached(ok=False, attempts=max_attempts, error=error)
         raise LLMError(f"{prompt_name}: no valid output after {max_attempts} attempts ({error})")

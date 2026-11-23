@@ -103,18 +103,6 @@ CREATE TABLE IF NOT EXISTS meta.llm_cache (
     created_at     timestamptz NOT NULL DEFAULT now()
 );
 
--- Per-item results of batched classification calls, so a new value in the vocabulary costs one small call
--- instead of shifting every batch and missing the batch-level cache above.
-CREATE TABLE IF NOT EXISTS meta.llm_item_cache (
-    prompt_name    text NOT NULL,
-    prompt_version text NOT NULL,
-    model          text NOT NULL,
-    item_key       text NOT NULL,
-    response       jsonb NOT NULL,
-    created_at     timestamptz NOT NULL DEFAULT now(),
-    PRIMARY KEY (prompt_name, prompt_version, model, item_key)
-);
-
 CREATE TABLE IF NOT EXISTS meta.llm_calls (
     call_id        bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     agent          text NOT NULL,
@@ -150,3 +138,7 @@ CREATE TABLE IF NOT EXISTS meta.agent_proposals (
     decided_by   text,
     UNIQUE (kind, item_key, payload_hash)
 );
+
+-- Idempotent upgrade for existing databases; ordinary agent calls leave this NULL.
+ALTER TABLE meta.llm_calls ADD COLUMN IF NOT EXISTS eval_run_id uuid;
+CREATE INDEX IF NOT EXISTS llm_calls_eval_run_idx ON meta.llm_calls (eval_run_id);

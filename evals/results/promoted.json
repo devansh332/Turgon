@@ -1,5 +1,6 @@
 {
-  "evaluated_at": "2026-11-23T09:46:02+00:00",
+  "eval_run_id": "61cdbb80-bc86-4246-b492-d87f521ba5c3",
+  "evaluated_at": "2026-11-23T10:59:07+00:00",
   "model": {
     "bulk": "gpt-5-mini",
     "reasoning": "gpt-5-mini",
@@ -9,7 +10,7 @@
     "category_labels": "v1",
     "description_templates": "v1",
     "people": "v1",
-    "dq_rules": "v1"
+    "dq_rules": "v3"
   },
   "labels": {
     "agent": {
@@ -41,20 +42,22 @@
     "agent": {
       "items": 69,
       "returned": 69,
-      "is_description_accuracy": 1.0,
+      "is_description_accuracy": 0.9855,
       "category_accuracy": 0.9365,
-      "safety_accuracy": 0.8254,
-      "urgency_exact": 0.7143,
-      "urgency_within_one": 1.0
+      "safety_accuracy": 0.8571,
+      "safety_recall": 1.0,
+      "urgency_exact": 0.6984,
+      "urgency_within_one": 0.9841
     },
     "held_out": {
       "items": 66,
       "returned": 66,
-      "is_description_accuracy": 1.0,
+      "is_description_accuracy": 0.9848,
       "category_accuracy": 0.9333,
-      "safety_accuracy": 0.8167,
-      "urgency_exact": 0.7,
-      "urgency_within_one": 1.0
+      "safety_accuracy": 0.85,
+      "safety_recall": 1.0,
+      "urgency_exact": 0.6833,
+      "urgency_within_one": 0.9833
     },
     "rules_baseline": {
       "items": 69,
@@ -62,6 +65,7 @@
       "is_description_accuracy": 0.9565,
       "category_accuracy": 0.873,
       "safety_accuracy": 0.9048,
+      "safety_recall": 0.6875,
       "urgency_exact": 0.6508,
       "urgency_within_one": 0.9683
     },
@@ -71,6 +75,7 @@
       "is_description_accuracy": 0.9545,
       "category_accuracy": 0.8667,
       "safety_accuracy": 0.9167,
+      "safety_recall": 0.6667,
       "urgency_exact": 0.6333,
       "urgency_within_one": 0.9667
     }
@@ -100,44 +105,60 @@
   "dq": {
     "agent": {
       "golden_issues": 25,
-      "rules": 15,
-      "recall": 0.4,
+      "rules": 16,
+      "recall": 0.72,
+      "strict_recall": 0.44,
       "column_recall": 1.0,
       "executable_rate": 1.0,
       "non_empty_rate": 1.0,
       "missed": [
-        "building:placeholder_values",
         "building:test_or_junk_data",
-        "category:swapped_fields",
         "category:test_or_junk_data",
         "cost:mixed_formats",
-        "cost:placeholder_values",
-        "created_at:placeholder_values",
-        "description:missing_values",
-        "resolved_at:logical_inconsistency",
-        "resolved_at:mixed_formats",
-        "resolved_at:placeholder_values",
-        "sla_hours:placeholder_values",
-        "status:placeholder_values",
-        "submitted_by:test_or_junk_data",
-        "ticket_id:placeholder_values"
+        "cost:sentinel_values",
+        "description:free_text_needs_parsing",
+        "priority:missing_values",
+        "submitted_by:test_or_junk_data"
       ]
+    },
+    "predicates": {
+      "cases": 12,
+      "scope": [
+        "assigned_to:missing_values",
+        "category:swapped_fields",
+        "cost:sentinel_values",
+        "created_at:placeholder_values",
+        "priority:missing_values",
+        "resolved_at:placeholder_values",
+        "sla_hours:sentinel_values",
+        "ticket_id:invalid_identifier"
+      ],
+      "true_positives": 3,
+      "false_positives": 0,
+      "false_negatives": 5,
+      "precision": 1.0,
+      "recall": 0.375,
+      "f1": 0.5455,
+      "errors": []
     }
   },
   "ops": {
-    "calls": 36,
-    "first_try_valid_rate": 0.8889,
+    "calls": 14,
+    "first_try_valid_rate": 0.7143,
     "failure_rate": 0.0,
-    "latency_ms_p50": 36443.5,
-    "latency_ms_p95": 72520,
-    "tokens_in": 84805,
-    "tokens_out": 117118,
-    "cost_usd": 0.25544,
-    "classifier_cost_per_1k_rows": 0.021385
+    "latency_ms_p50": 35331.0,
+    "latency_ms_p95": 59827,
+    "tokens_in": 43653,
+    "tokens_out": 58232,
+    "cost_usd": 0.12738,
+    "classifier_cost_per_1k_rows": 0.010602
   },
   "gate": {
-    "passed": true,
-    "failures": [],
-    "compared_with": null
+    "passed": false,
+    "failures": [
+      "templates.held_out.urgency_within_one: 1.0 -> 0.9833"
+    ],
+    "compared_with": "2026-11-23T09:46:02+00:00",
+    "rebaselined": "Adopted manually as the baseline: the previous baseline aggregated operations metrics over historical calls and is not comparable with per-run metrics. The one failure is a single held-out template (run-to-run variation on an unchanged classifier prompt)."
   }
 }

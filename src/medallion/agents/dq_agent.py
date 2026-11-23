@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 
 from medallion import proposals
 from medallion.agents.llm import LLMClient
-from medallion.agents.profiler import profile_bronze
+from medallion.agents.profiler import cross_column_profile, profile_bronze
 from medallion.agents.sql_guard import UnsafeSQL, predicate_query
 from medallion.config import SOURCE_COLUMNS
 from medallion.db import connect, read_only
@@ -48,10 +48,16 @@ class Rules(BaseModel):
 
 
 def compact_profile(profile: dict) -> dict:
-    return {
-        c: {k: p[k] for k in ("blank_rate", "distinct_values", "top_values", "shapes", "numeric") if k in p}
-        for c, p in profile["columns"].items()
-    }
+    fields = (
+        "blank_rate",
+        "distinct_values",
+        "top_values",
+        "shapes",
+        "shape_examples",
+        "numeric_date_order",
+        "numeric",
+    )
+    return {c: {k: p[k] for k in fields if k in p} for c, p in profile["columns"].items()}
 
 
 def dry_run(conn: psycopg.Connection, predicate: str) -> tuple[int | None, str | None]:
@@ -71,6 +77,7 @@ def propose_rules(conn: psycopg.Connection, llm: LLMClient) -> tuple[list[Rule],
     payload = {
         "profile": {"rows": profile["rows"], "columns": compact_profile(profile)},
         "sample_rows": samples,
+        "cross_column_checks": cross_column_profile(conn),
         "issue_types": ISSUE_TYPES,
     }
     result = llm.structured(

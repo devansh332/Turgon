@@ -2,12 +2,15 @@
 
 A bronze, silver and gold pipeline for `data/raw_tickets.csv` (10,280 tickets) on PostgreSQL. **Four
 LLM agents** propose schema, quality rules, classifications and PII tags. **Nothing an agent produces
-reaches silver until it passes an approval gate**, and every agent is scored against a golden set *and*
-a plain-rules baseline.
+reaches silver until it passes an approval gate**. The classifier is scored against a golden set *and*
+a plain-rules baseline; DQ has issue-coverage and executable-predicate evaluations.
 
 ```bash
 make run          # one command: Postgres up, then ingest, silver, gold, reconcile, metrics. No API key needed.
 ```
+
+Without make, `docker compose up --build --exit-code-from pipeline` does the same; run logs then record
+`git_sha=unknown` unless `GIT_SHA` is set, because the container has no git.
 
 Only Docker is required. `make run` uses the **reviewed, committed** agent output in `seeds/`, so it is
 deterministic and offline. To regenerate that output with a live model, run `cp .env.example .env`, set
@@ -49,7 +52,7 @@ flowchart LR
       S[silver.tickets<br/>typed, conformed, dq_flags]
       Q[quarantine.tickets_rejected<br/>reasons array]
       G[gold<br/>ticket_facts view<br/>sla_compliance<br/>vendor_performance<br/>backlog_daily]
-      M[(meta<br/>pipeline_runs, watermarks, alerts<br/>dq_metrics, reconciliation<br/>agent_proposals, llm_calls, llm caches)]
+      M[(meta<br/>pipeline_runs, watermarks, alerts<br/>dq_metrics, reconciliation<br/>agent_proposals, llm_calls, llm_cache)]
     end
 
     B -->|deterministic transform<br/>incremental MERGE| S
@@ -61,7 +64,7 @@ flowchart LR
       T[tagging<br/>PII + domain]
       C[classifier<br/>labels, templates, people]
       D[data quality<br/>SQL rule proposals]
-      SC[schema + drift<br/>silver DDL, migrations]
+      SC[schema drift<br/>column migrations]
     end
 
     B -. profile + samples .-> AG
@@ -143,6 +146,9 @@ main ones:
 window*, recomputes the winner for each affected ticket, stages the result, and runs one `MERGE`. Changing
 any seed file changes `rules_version`, which forces a full rebuild. The tests check that a rerun with no new
 rows is a no-op and that two full rebuilds give byte-identical output.
+Silver uses one repeatable-read snapshot and advances its watermark only to the newest row it actually
+processed. A batch arriving during the build is left for the next run. Bronze serializes CSV writers so
+their ingest timestamps follow commit order; the regression suite exercises overlapping ingestion.
 
 **Result on the supplied file** (clean `make reset && make run`, about 5 seconds):
 
@@ -167,13 +173,13 @@ rows is a no-op and that two full rebuilds give byte-identical output.
 
 - **SLA compliance is almost zero.** 6,958 of 10,249 tickets (68%) are still open, and 6,949 of those are
   past SLA at `as_of` (2025-07-29). Closed tickets are no better: 2,388 of the 2,394 with a measurable
-  duration breached. Their median resolution is 5,058 hours (about 7 months) against a ~30-hour SLA, so
+  duration breached. Their median resolution is 5,058 hours (about 7 months) against a median 24-hour SLA, so
   the resolve dates in this synthetic file are not realistic. The mart says this plainly instead of
   hiding it.
 - **How much of that is assumed.** 3,503 breaches depend on assumed timing (a date-only timestamp, read as
   midnight, or a date whose month and day could be swapped), and 4,093 SLAs come from policy. Both are separate columns, so a reader can
   exclude them.
-- **Vendors.** Of the 3,033 tickets given to a specialist vendor with a declared trade, 2,483 (82%) are
+- **Vendors.** Of the 3,032 tickets given to a specialist vendor with a declared trade, 2,483 (82%) are
   outside that trade. Assignees look random with respect to category in this file. 3,092 tickets are
   unassigned yet carry $11.4M of recorded cost.
 
@@ -206,13 +212,14 @@ tickets. A test corrupts a gold row on purpose and checks that the run fails.
 ## 3. Agents: assessment with real input and output
 
 The brief asks for at least two of (a) schema inference/drift, (b) data quality, (c) semantic
-classification and (d) gold design. I built **(a), (b) and (c)**, plus a small PII/column-tagging agent
-because governance depends on it.
+classification and (d) gold design. I built **(b) and (c)**, the **drift half of (a)**, and a small
+PII/column-tagging agent for the "tagging at landing" item. I also built the other half of (a), a full
+silver-schema proposer; verification caught its errors, and for this file hand-built silver was simpler,
+so I removed it (see below).
 
 **(d) is deliberately not an agent.** Gold design is a stakeholder conversation ("what decisions does the
 FM manager make each month?"). With no stakeholder to interview, an LLM can only generate plausible marts
-from column names. I designed gold by hand from the business questions above. The schema agent does
-propose a *silver* shape, which is where inference from data actually works.
+from column names. I designed gold by hand from the business questions above.
 
 All agents share one client ([src/medallion/agents/llm.py](src/medallion/agents/llm.py)):
 
@@ -223,18 +230,19 @@ All agents share one client ([src/medallion/agents/llm.py](src/medallion/agents/
   category), because gpt-5-mini did return such contradictions;
 - a repair retry that sends the validation error back to the model, and a re-ask for items a batch
   silently dropped;
-- two caches: one per call (prompt name, prompt version, model, payload) and one per item, so a new
-  batch only sends values never seen before. A cached answer that no longer validates counts as a miss;
+- a cache keyed on prompt name, prompt version, model and payload. A cached answer that no longer
+  validates counts as a miss. New batches only send values not already in the seeds;
 - every call logged with tokens, cost, latency and attempts, failures included;
-- the budget checked before every attempt, plus alerts on budget and failure rate.
+- the budget checked before every attempt, with an alert when it is exhausted.
 
 Prompts are versioned files in [src/medallion/agents/prompts/](src/medallion/agents/prompts/). Each one has
-the same four sections:
+the same structure:
 
 - **Context:** what the data is and why a mistake is expensive.
 - **Task:** field definitions with decision rules.
 - **Rules:** guardrails.
-- **Examples:** including a negative one.
+- **Examples** (the three classifier prompts): worked cases, including a negative one. The DQ, drift and
+  tagging prompts have none, so they cannot leak golden answers.
 
 The model gets evidence (profile, counts, one real example per item), not raw rows. See
 [docs/agent_assessment.md](docs/agent_assessment.md#how-the-prompts-are-built).
@@ -252,7 +260,7 @@ Summary of the live run (all four agents, cold cache, 24 live calls):
 | Classifier: templates | 98 | 36 auto-approved, 61 approved, 1 rejected | 14 | $0.077 | **Best value** |
 | Classifier: people | 33 | 16 auto-approved, 15 approved, 2 rejected | 1 | $0.009 | Small win |
 | Data quality | 13 rules | 2 approved, 11 rejected | 1 | $0.017 | Useful checklist, mostly redundant here |
-| Schema + drift | 2 silver schemas, 1 migration | schemas rejected, migration approved | 3 | $0.034 | Drift useful; silver schema not |
+| Schema: silver proposer (since removed) + drift | 2 silver schemas, 1 migration | schemas rejected, migration approved | 3 | $0.034 | Drift useful; silver schema not |
 | Tagging (PII) | 13 columns | 11 auto-approved, 2 approved | 1 | $0.007 | Useful, cheap |
 | **Total** | | | **24** | **$0.168** | |
 
@@ -281,15 +289,19 @@ value is classified once, not once per row.
   about an hour of careful work. The agent did it in about 12 minutes of
   API time, including a re-run, for $0.08, and
   reviewing 61 proposals is much faster than writing them. On held-out items it beat my
-  keyword rules on category (0.93 vs 0.87) and urgency (0.70 vs 0.63 exact). It was *worse* on safety
-  (0.82 vs 0.92), mostly by over-flagging. That is acceptable because any safety flag makes the proposal
-  high risk, so a human sees it.
+  keyword rules on category (0.93 vs 0.87) and urgency (0.68–0.70 vs 0.63 exact, across three eval runs).
+  On safety it errs on the safe side: in the fresh run it caught every real hazard (recall 1.00), where
+  the keyword rules missed a third of them (0.67). The price is over-flagging, so its overall safety
+  accuracy is lower (0.82–0.85 vs 0.92). Every positive safety flag goes to review, and so does any case
+  where the model says "not safety" but a keyword rule says it is, with `safety_rule` recorded beside the
+  model's answer. A disagreement is never auto-applied.
 - **Labels tied the rules exactly** (is_label 0.96, category 1.00 for both). My rules were written after
   reading this file, so the agent's value here is producing the mapping in a minute and handling
   *unseen* spellings in future batches, not accuracy today.
-- **Problems I had to engineer around:**
-  - About 20 templates came back self-contradictory (`is_description=false` with a category), and 3 of
-    them had been auto-approved. The validators now reject that, and the repair retry fixed them.
+- **Failure modes the guardrails now catch:**
+  - About 20 templates came back self-contradictory (`is_description=false` with a category); 3 had been
+    auto-approved before the validators existed. The validators now reject that, and the repair retry
+    fixed them.
   - In 3 of 8 template batches the model silently dropped items, so the client now re-asks for what is
     missing.
 
@@ -311,7 +323,7 @@ is dry-run as a read-only role to count the affected rows.
   values, the code downgrades the action to `flag` and keeps the original request in `requested_action`;
   silver never deletes or rewrites data because of an agent rule.
 
-**My take: a good checklist, but here it mostly repeated work I had already done.** In the agent run, its
+**My take: a fast, cheap first draft; on this file it mainly confirmed rules I had already written.** In the agent run, its
 13 rules matched 16 of my 25 golden issues (recall 0.64). The scorer accepts an equivalent issue type,
 for example `-1` filed as `sentinel_values` instead of `placeholder_values`, and lists those equivalents
 explicitly in [evals/golden/dq_issues.csv](evals/golden/dq_issues.csv). Requiring the exact label gives
@@ -323,22 +335,33 @@ What it missed:
 - junk values (`test building`, `admin`);
 - mixed formats and placeholders in `resolved_at`.
 
-It found `created_at` problems but not the same problems in `resolved_at`, and its 13 rules are below
-the 12–25 the prompt asks for. My hand-built silver rules came first and already covered everything it
-found, so it saved me no time on this file. On a *new* source, the first draft of rules it produces in
-one minute for about $0.02 would be worth having.
+It found `created_at` problems but not the same problems in `resolved_at`. My hand-built silver rules
+came first and already covered everything it found, so on this file it served as a cross-check rather
+than a time saver. On a *new* source, a first draft of rules in one minute for about $0.02 is worth
+having.
+
+**Review hardening:** DQ prompt v3 also receives real example values for each shape, date-order counts
+for both timestamps, and cross-column probes (category/description length, open status with a resolve
+date). Issue recall rose from 0.56 to 0.72. I chose the probes after reviewing v2's misses, so part of
+that gain is specific to this file. Because naming an issue is not the same as detecting it, I also
+execute the generated SQL on 12 labelled synthetic rows. There it scores precision 1.00 and recall
+0.375: every row it flags is a real problem, but it does not yet catch them all. Full measurements are
+in §4.
 
 ### (a) Schema inference and drift agent
 
-- **Silver schema (rejected twice).** The DDL was reasonable: 13 typed columns, `numeric(12,2)` cost.
-  The DDL is validated (one `CREATE TABLE silver_proposed.*`, no `AS SELECT`) and run as the sandbox
-  role. But both transform SQLs failed verification:
-  - the first parsed `03-20-2024` as day-first (`date/time field value out of range`), although the data
-    is provably month-first;
+- **Silver schema (rejected twice, then removed).** The proposer was given the bronze profile and
+  asked for a typed DDL plus a transform SELECT. The code validated and dry-ran both. The DDL was
+  reasonable: 13 typed columns, `numeric(12,2)` cost. Both transforms failed verification:
+  - the first parsed `03-20-2024` as day-first (`date/time field value out of range`);
   - the second was not valid SQL.
 
-  It is a useful first draft for a new source. For this file, the hand-built silver was better and took
-  less time than reviewing the agent's.
+  The root cause of the first failure was the evidence, not the model: the profile reduced dates to
+  shapes like `99-99-9999`, so it could not see that the first number never exceeds 12. Verification
+  caught it before anything reached silver, which is the point of the gate. For this file, hand-built
+  silver was quicker to write than the agent's output was to verify, so I removed the proposer, its
+  sandbox schema and its verification code to keep the code minimal. The two proposals stay in
+  [artifacts/agent_run/proposals.csv](artifacts/agent_run/proposals.csv) (ids 663 and 665).
 - **Drift (approved).** Batch 2 adds a `channel` column. Bronze stores it in `_extra` and raises an alert;
   the agent then proposed
   `ALTER TABLE silver.tickets ADD COLUMN IF NOT EXISTS channel text` with a guarded extract
@@ -352,13 +375,9 @@ one minute for about $0.02 would be worth having.
 It tags every bronze column with domain, sensitivity and PII type. `submitted_by` was tagged
 `person_name` at 0.99. `assigned_to` was tagged `free_text_may_contain_pii`, citing values like
 `"Joe (in-house)"`. `description` and `resolution_notes` were tagged as free text that may contain PII
-(0.75, approved by me). **The tags drive access:** the `medallion_bi` role gets column grants on
-every gold object that hide columns whose source is tagged PII. Today that is `assignee` and
-`assignee_type`, in `ticket_facts` and `vendor_performance` (a test checks this). Vendor names are
-company names, but `assigned_to` also holds in-house staff such as `Joe (in-house)`, so the whole column
-is treated as PII. A BI user reads the vendor mart by category without the names; operations reads it
-through the owner role.
-Cheap and useful; a regex pre-pass catches the obvious names, and the model handles the judgment calls.
+(0.75, approved by me). The tags land in `meta.column_tags` and `seeds/column_tags.yaml`, ready to drive
+masking or column grants (see [the 100x plan](docs/scale_100x.md#4-governance-at-100x)). Cheap and
+useful: a regex pre-pass catches the obvious names, and the model handles the judgment calls.
 
 Full outputs and the rejected proposals are in [docs/agent_assessment.md](docs/agent_assessment.md).
 
@@ -368,12 +387,13 @@ Full outputs and the rejected proposals are in [docs/agent_assessment.md](docs/a
 
 **Approval gate.** Agents only write to `meta.agent_proposals`. A proposal is auto-approved only if the
 agent marked it low risk **and** confidence is at least 0.9. Overwriting an already-approved decision is
-always high risk, and so is re-proposing something a reviewer rejected (the payload hash covers only
-the decision fields, so a new confidence score does not make it "new"). A reviewer can revoke an
-auto-approval; the next export removes it from the seeds. Some kinds of proposal are always high risk:
+always high risk. A rejection sticks: proposals are keyed on a hash of the decision fields only, so the
+same answer with a new confidence score maps to the rejected proposal. Some kinds of proposal are
+always high risk:
 
 - merging people by anything other than an exact match;
 - urgency `critical` or a safety flag on a template;
+- disagreement between the model's safety flag and the keyword safety baseline;
 - quarantine rules;
 - schema changes;
 - removing a PII flag.
@@ -382,21 +402,31 @@ auto-approval; the next export removes it from the seeds. Some kinds of proposal
 make proposals                         # pending queue
 docker compose run --rm pipeline python -m medallion proposals list --status all -v   # with rationale
 make approve IDS="41 42" BY=devansh    # approve, then export to seeds/*.yaml with _provenance
+make reject IDS="41" BY=devansh        # reject pending or revoke an approved/auto-approved proposal
 make run                               # rules_version changed, so silver rebuilds fully
 ```
+
+Revocation removes a seed only when its decision matches the rejected proposal. Export never falls back
+to an older approval for that item. Unrelated committed seeds survive database resets and rejection of
+alternative suggestions. The next silver rebuild removes the revoked enrichment.
 
 **Evals** ([src/medallion/agents/evals.py](src/medallion/agents/evals.py), golden sets in
 [evals/golden/](evals/golden/)): each agent is scored against hand-labeled data **and against a plain-rules
 baseline**, so the question "did the LLM beat a regex?" gets a number. The same run records operations
 metrics: cost per 1k rows, validity on the first attempt, p95 latency and failure rate.
+Each evaluation has an `eval_run_id`; every LLM call is tagged with it and bypasses the response cache.
+Metrics exclude historical calls and simultaneous agent/evaluation runs. Normal `make agents` still uses
+the cache. A fresh eval incurs model charges even when prompts are unchanged.
 
 **Promotion gate:** `make eval` compares with `evals/results/promoted.json`. It fails if any gated metric
 drops by more than 0.01 or if cost per 1k rows rises by more than 20%. Gated metrics are the
-**held-out** scores (golden items quoted as examples in a prompt are excluded), DQ recall and the
+**held-out** scores (including safety recall; golden items quoted as examples in a prompt are excluded),
+DQ issue recall, DQ predicate F1 and the
 first-try validity rate. A prompt or model change is promoted only with `eval --promote`.
+New metrics without an older baseline are recorded for subsequent comparisons.
 
-Latest run (gpt-5-mini, held-out items, DQ prompt v2, from
-[evals/results/latest.json](evals/results/latest.json)):
+Recorded run **before review hardening** (gpt-5-mini, held-out items, DQ prompt v2, from
+[evals/results/pre_hardening.json](evals/results/pre_hardening.json)); not a measurement of v3:
 
 | Task | Metric | Agent | Rules baseline |
 |---|---|---|---|
@@ -411,12 +441,32 @@ Latest run (gpt-5-mini, held-out items, DQ prompt v2, from
 Operations: first-try validity 0.73, failure rate 0 (the repair retry fixed every invalid answer), p50
 latency 35 s and p95 52 s per batch, and $0.010 of classifier cost per 1k rows.
 
-**The gate blocked this run.** First-try validity fell from 0.89 to 0.73, so
-[promoted.json](evals/results/promoted.json) still holds the previous run, with DQ prompt v1. The
-drop is 4 retries in 15 calls, all on template batches whose prompt did not change, so it is sampling
-noise. Even so, I left the result unpromoted rather than override the gate. It also shows a real
-weakness: a 0.01 tolerance is too tight for a rate measured on 15 calls. In production I would gate on
-a confidence interval, or on several runs.
+**The gate held back that recorded run** on first-try validity (0.89 to 0.73) against the baseline of
+the time (DQ prompt v1).
+Investigating it showed the two figures were measured differently: that baseline aggregated every
+historical call for those prompt versions (36 calls), this run only its own 15. Each eval now tags its
+calls with an `eval_run_id`, so operations metrics cover only that run's own calls. A 0.01
+tolerance is still tight for a rate measured on about 15 calls; in production I would gate on a
+confidence interval, or on several runs.
+
+**Fresh evaluation after review hardening** ([latest.json](evals/results/latest.json), DQ prompt v3,
+14 uncached calls, $0.13):
+
+| Measure | Fresh result | Comparison |
+|---|---|---|
+| DQ issue recall / strict recall | **0.72 / 0.44**, 16 rules, all executable | Previously 0.56 / 0.44 |
+| DQ predicate precision / recall / F1 | **1.00 / 0.375 / 0.55** on 12 synthetic cases | New measurement; five labelled issues missed |
+| Held-out template safety accuracy / recall | 0.85 / **1.00** | Rules: 0.92 / 0.67; unchanged classifier prompt, so run-to-run variation applies |
+| Held-out template urgency within one level | 0.98 | Old baseline: 1.00 |
+| First-try validity / eventual failure rate | 0.71 / 0 | Four repaired batches, measured only in this run |
+
+**The gate flagged this run, and I then adopted it as the baseline by hand.** Its only failure was one
+of the 60 held-out templates, the one-word `cold`, classified as junk, so it got no urgency: a 0.017
+drop against a 0.01 tolerance. The classifier prompt was unchanged, so this is run-to-run model
+variation, and it does not touch pipeline output: `make run` uses the reviewed seeds. Because the old
+baseline's operations metrics were not comparable with per-run ones, this run is now
+[promoted.json](evals/results/promoted.json) (the `rebaselined` note records why). It is the first
+baseline for safety recall and predicate F1, and every future `make eval` gates against it.
 
 ---
 
@@ -425,12 +475,15 @@ a confidence interval, or on several runs.
 - **Run log:** every stage writes to `meta.pipeline_runs` (status, rows in and out, details, git sha),
   and every event is also a JSON log line on stderr.
 - **Quality metrics:** null rates per column go to `meta.dq_metrics`, and ticket counts per flag go to
-  `meta.dq_flag_counts`, every run. An alert
-  fires when a null rate moves more than 5 points from the previous run, when quarantine exceeds 2%, when
-  the LLM failure rate exceeds 10%, when the budget is exceeded, and on schema drift.
+  `meta.dq_flag_counts`, every run. An alert fires when a null rate moves more than 5 points from the
+  previous run, when quarantine exceeds 2%, when the LLM budget is exhausted, when descriptions have no
+  approved enrichment, and on schema drift. Every LLM call, failed ones included, is in
+  `meta.llm_calls`, and the evals report the failure rate.
 - **`make metrics`** prints the run, quality, alert and LLM cost report.
-- **`make lineage KEY=TKT-1234`** traces a gold row to silver, to the bronze versions, and to the CSV file
-  and line. A worked trace is in [docs/lineage.md](docs/lineage.md).
+- **`make lineage KEY=TKT-3960`** traces one ticket: its gold fact row and the mart rows it is counted
+  in, the gold and silver runs that built them (time, git sha, rules version), the approved agent
+  decisions behind its values, and every bronze version with its CSV file and line. A worked trace is
+  in [docs/lineage.md](docs/lineage.md).
 
 **Incremental and drift demo:** `make demo-incremental` loads
 [tests/fixtures/batch2_drift.csv](tests/fixtures/batch2_drift.csv). It has a new `channel` column, a late
@@ -490,20 +543,21 @@ Full plan: **[docs/scale_100x.md](docs/scale_100x.md)**. In short:
 
 ## 7. Where AI did not help (and what I would do differently)
 
-- **Silver schema and cleaning rules.** The schema agent's transform failed twice. It parsed `03-20-2024`
-  as day-first, although 2,819 values in the file only make sense month-first. The DQ agent found most
+- **Silver schema and cleaning rules.** The schema agent's transform did not pass verification, so I
+  removed it. It parsed `03-20-2024` as day-first because its profile only showed date shapes, not the
+  values that prove month-first (2,819 of them). The DQ agent found most
   issues, but after I had already found them myself while profiling the data with SQL. It missed the
   swapped category/description pairs, which only show up when you compare columns across many rows,
   not in a profile and a handful of sample rows. Next time I would give the DQ agent cross-column probes
   (pairwise checks, rows that fail parsing) along with the per-column profile, and run it *before*
   writing silver rules, not after.
-- **The model's output needed more guarding than I expected.**
+- **Guardrails were essential, not optional.**
   - Contradictory answers: some were auto-approved before I added validators. Confidence alone is not
     a safe auto-approval signal.
   - Silently dropped batch items.
   - Gratuitous `CREATE SCHEMA` statements in DDL.
 
-  Each fix is small, but together they are a large share of `llm.py` and `classifier.py`.
+  Each fix is small; together they are what makes auto-approval safe.
 - **People resolution.** The model suggested `Bob → Robert` and `Mike → Michael` merges. They are
   plausible but cannot be checked from this data, so I rejected them. A real HR or vendor directory would
   beat any model here.
@@ -546,18 +600,18 @@ src/medallion/agents/           llm client, profiler, the four agents, sql_guard
 evals/golden/                   hand-labeled sets; evals/results/ holds scored runs + promoted baseline
 tests/                          unit tests (parsers, transform, SQL guard) + DB integration tests
 docs/                           cleaning rules, lineage trace, 100x plan, ADR, agent assessment
-artifacts/schema_agent/         the schema agent's proposed DDL and comparison with the hand-built silver
+artifacts/agent_run/            every proposal and LLM call from the live agent run (CSV exports)
 ```
 
 | Command | What it does |
 |---|---|
 | `make run` | full pipeline (rerun-safe; a second run is a no-op) |
 | `make agents` | run all four agents with a live model and write proposals |
-| `make proposals` / `make approve IDS=".." BY=..` | review queue / approve and export to seeds |
+| `make proposals` / `make approve IDS=".." BY=..` / `make reject IDS=".." BY=..` | review queue, approve or revoke, and export seeds |
 | `make eval` | score against the golden set and baseline, apply the promotion gate |
 | `make demo-incremental` | second batch with drift and late updates |
-| `make metrics` / `make lineage KEY=TKT-1234` | reports |
-| `make test` / `make lint` | 88 tests (unit + Postgres integration) / ruff |
+| `make metrics` / `make lineage KEY=TKT-3960` | reports |
+| `make test` / `make lint` | 99 tests (unit + Postgres integration) / ruff |
 | `make reset` | drop the database volume |
 
 ### Running the agents

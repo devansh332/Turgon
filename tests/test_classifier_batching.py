@@ -1,4 +1,6 @@
-"""Batching, completion of dropped items and the item cache, with a fake LLM (no network, no database)."""
+"""Completion of dropped items and output consistency, with a fake LLM (no network, no database)."""
+
+from types import SimpleNamespace
 
 import pytest
 from pydantic import ValidationError
@@ -19,7 +21,6 @@ class FakeLLM:
     def __init__(self):
         self.cfg = type("Cfg", (), {"llm_model_bulk": "fake"})()
         self.batches: list[list[str]] = []
-        self.item_cache: dict[str, object] = {}
         self.calls = 0
 
     def structured(self, *, payload, schema, **_):
@@ -33,27 +34,12 @@ class FakeLLM:
         ]
         return schema.model_validate({"results": results})
 
-    def cached_items(self, prompt_name, model, keys, schema):
-        return {k: self.item_cache[k] for k in keys if k in self.item_cache}
-
-    def cache_items(self, prompt_name, model, items):
-        self.item_cache.update(items)
-
 
 def test_dropped_items_are_re_asked_once():
     llm = FakeLLM()
     out = classifier.classify_labels(llm, [("a/c", 5), ("heat", 3), ("cool", 1)], TAXONOMY)
     assert sorted(r.label for r in out) == ["a/c", "cool", "heat"]
     assert llm.batches == [["a/c", "heat", "cool"], ["cool"]]
-
-
-def test_item_cache_sends_only_new_values():
-    llm = FakeLLM()
-    classifier.classify_labels(llm, [("a/c", 5), ("heat", 3)], TAXONOMY)
-    llm.batches.clear()
-    out = classifier.classify_labels(llm, [("a/c", 9), ("heat", 3), ("chiller", 1)], TAXONOMY)
-    assert sorted(r.label for r in out) == ["a/c", "chiller", "heat"]
-    assert llm.batches == [["chiller"]]  # counts changed and a value was added: only the new value is paid for
 
 
 def test_self_contradicting_template_fails_validation():
@@ -73,3 +59,43 @@ def test_self_contradicting_template_fails_validation():
         schema.model_validate({"results": [bad]})
     with pytest.raises(ValidationError, match="requires a category"):
         schema.model_validate({"results": [bad | {"is_description": True, "category": None}]})
+
+
+def test_safety_rule_disagreement_requires_review(monkeypatch):
+    template = "sparking power outlet"
+    result = (
+        classifier.models(TAXONOMY)["template"]
+        .model_validate(
+            {
+                "results": [
+                    {
+                        "template": template,
+                        "is_description": True,
+                        "category": "HVAC",
+                        "is_safety_issue": False,
+                        "urgency": "low",
+                        "confidence": 0.99,
+                        "rationale": "model missed the hazard",
+                    }
+                ]
+            }
+        )
+        .results
+    )
+    seeds = SimpleNamespace(taxonomy=TAXONOMY, ref={"buildings": []}, category_labels={}, templates={}, people={})
+    monkeypatch.setattr(classifier, "Seeds", lambda: seeds)
+    monkeypatch.setattr(classifier, "distinct_labels", lambda conn: {})
+    monkeypatch.setattr(classifier, "distinct_people", lambda conn: {})
+    monkeypatch.setattr(classifier, "distinct_templates", lambda conn, buildings: {template: {"template": template}})
+    monkeypatch.setattr(classifier, "classify_templates", lambda *args: result)
+    proposed = []
+
+    def propose(conn, **kwargs):
+        proposed.append(kwargs)
+        return 1, "pending"
+
+    monkeypatch.setattr(classifier.proposals, "propose", propose)
+    llm = SimpleNamespace(cfg=SimpleNamespace(llm_model_bulk="fake"), prompt_version=lambda _: "v1")
+    classifier.run(SimpleNamespace(commit=lambda: None), llm, 0.9)
+    assert proposed[0]["risk"] == "high"
+    assert proposed[0]["payload"]["safety_rule"] is True
